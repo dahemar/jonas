@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de URLs de Imágenes</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+        .config {
+            background: #f5f5f5;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 5px;
+        }
+        input {
+            width: 200px;
+            padding: 0.5rem;
+            margin: 0.5rem;
+        }
+        button {
+            background: #333;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            cursor: pointer;
+            margin: 1rem 0;
+        }
+        button:hover {
+            background: #555;
+        }
+        .output {
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-size: 0.9rem;
+        }
+        .copy-btn {
+            background: #28a745;
+            margin-left: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Generador de URLs de Imágenes</h1>
+    
+    <div class="config">
+        <h3>Configuración:</h3>
+        <label>Usuario de GitHub: <input type="text" id="githubUser" placeholder="tu-usuario"></label><br>
+        <label>Nombre del repositorio: <input type="text" id="repoName" placeholder="tu-repo"></label><br>
+        <button onclick="generateURLs()">Generar URLs</button>
+    </div>
+    
+    <div id="output" class="output" style="display: none;"></div>
+    
+    <script>
+        function generateURLs() {
+            const githubUser = document.getElementById('githubUser').value;
+            const repoName = document.getElementById('repoName').value;
+            
+            if (!githubUser || !repoName) {
+                alert('Por favor, completa los campos de configuración');
+                return;
+            }
+            
+            const baseURL = `https://${githubUser}.github.io/${repoName}`;
+            
+            // Estructura esperada de carpetas
+            const sections = ['works', 'commissions', 'exhibitions'];
+            const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
+            
+            let output = '=== URLs para Google Sheets ===\n\n';
+            output += 'Copia estas filas a tu Google Sheet:\n\n';
+            output += 'Date | Title | Content | Image URL | Section\n';
+            output += '-----|-------|---------|-----------|--------\n';
+            
+            // Generar URLs para cada sección
+            sections.forEach(section => {
+                // Simular nombres de archivos (en realidad necesitarías listar los archivos reales)
+                const sampleImages = [
+                    'imagen1.jpg',
+                    'imagen2.png',
+                    'proyecto1.jpg'
+                ];
+                
+                sampleImages.forEach((image, index) => {
+                    const imageURL = `${baseURL}/works/${section}/${image}`;
+                    const title = image.replace(/\.[^/.]+$/, '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    
+                    output += ` | ${title} | Descripción | ${imageURL} | ${section}\n`;
+                });
+            });
+            
+            output += '\n💡 Instrucciones:\n';
+            output += '1. Reemplaza los nombres de archivo de ejemplo con tus archivos reales\n';
+            output += '2. Añade títulos y descripciones personalizados\n';
+            output += '3. Copia las filas a tu Google Sheet\n';
+            
+            const outputDiv = document.getElementById('output');
+            outputDiv.textContent = output;
+            outputDiv.style.display = 'block';
+            
+            // Añadir botón de copiar
+            const copyBtn = document.createElement('button');
+            copyBtn.textContent = 'Copiar al portapapeles';
+            copyBtn.className = 'copy-btn';
+            copyBtn.onclick = () => {
+                navigator.clipboard.writeText(output).then(() => {
+                    alert('URLs copiadas al portapapeles');
+                });
+            };
+            outputDiv.appendChild(copyBtn);
+        }
+    </script>
+</body>
+</html> 

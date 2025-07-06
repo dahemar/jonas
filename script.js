@@ -14,7 +14,7 @@ function formatDate(dateString) {
 async function loadBlogPosts() {
     try {
         const response = await fetch(
-            `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Sheet1!A:D?key=${API_KEY}`
+            `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Sheet1!A:E?key=${API_KEY}`
         );
         const data = await response.json();
         
@@ -26,18 +26,22 @@ async function loadBlogPosts() {
         const blogContainer = document.getElementById('blog-posts');
         blogContainer.innerHTML = '';
 
-        posts.forEach(post => {
-            const [date, title, content, imageUrl] = post;
+        posts.forEach((post, idx) => {
+            // Rellenar valores vacíos
+            const [date = '', title = '', content = '', imageUrl = '', section = ''] = post;
+            if (section.trim().toLowerCase() !== 'blog') return;
             const postElement = document.createElement('div');
             postElement.className = 'blog-post';
-            
+            // Only include image if URL exists and is not empty
+            const imageHtml = imageUrl && imageUrl.trim() !== '' 
+                ? `<img src="${imageUrl}" alt="${title}">` 
+                : '';
             postElement.innerHTML = `
                 <h2>${title}</h2>
                 <div class="date">${formatDate(date)}</div>
-                ${imageUrl ? `<img src="${imageUrl}" alt="${title}">` : ''}
+                ${imageHtml}
                 <div class="content">${content}</div>
             `;
-            
             blogContainer.appendChild(postElement);
         });
     } catch (error) {
@@ -50,6 +54,7 @@ async function loadBlogPosts() {
                     <li>The Google Sheet is shared publicly</li>
                     <li>Your spreadsheet has the correct column headers</li>
                 </ul>
+                <p>Error details: ${error.message}</p>
             </div>
         `;
     }
