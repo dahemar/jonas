@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de URLs de Google Drive</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .instructions {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .warning {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .url-output {
+            background: #f1f8e9;
+            border: 1px solid #4caf50;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        button {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #1976d2;
+        }
+        .file-input {
+            margin: 10px 0;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .image-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .image-item {
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .image-item input {
+            width: 100%;
+            margin: 5px 0;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+        }
+        .copy-btn {
+            background: #4caf50;
+            font-size: 11px;
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Generador de URLs de Google Drive</h1>
+    
+    <div class="instructions">
+        <h3>📋 Instrucciones para Google Drive</h3>
+        <ol>
+            <li><strong>Crear carpeta en Google Drive:</strong> Ve a drive.google.com y crea una carpeta para las imágenes</li>
+            <li><strong>Subir imágenes:</strong> Sube todas las imágenes de las carpetas works/, commissions/, exhibitions/</li>
+            <li><strong>Obtener enlaces:</strong> Haz clic derecho en cada imagen → "Obtener enlace"</li>
+            <li><strong>Configurar permisos:</strong> Asegúrate de que sea "Cualquier persona con el enlace puede ver"</li>
+            <li><strong>Extraer ID:</strong> De la URL https://drive.google.com/file/d/FILE_ID/view, copia el FILE_ID</li>
+        </ol>
+    </div>
+
+    <div class="warning">
+        <strong>⚠️ Importante:</strong> Las URLs de Google Drive deben usar el formato: <code>https://drive.google.com/uc?id=FILE_ID</code>
+    </div>
+
+    <div class="container">
+        <h3>📁 Seleccionar carpetas de imágenes</h3>
+        <div class="file-input">
+            <label for="worksFolder">Carpeta works/:</label>
+            <input type="file" id="worksFolder" webkitdirectory directory multiple>
+        </div>
+        <div class="file-input">
+            <label for="commissionsFolder">Carpeta works/commissions/:</label>
+            <input type="file" id="commissionsFolder" webkitdirectory directory multiple>
+        </div>
+        <div class="file-input">
+            <label for="exhibitionsFolder">Carpeta works/exhibitions/:</label>
+            <input type="file" id="exhibitionsFolder" webkitdirectory directory multiple>
+        </div>
+        
+        <button onclick="generateURLs()">🔄 Generar URLs</button>
+        <button onclick="copyToClipboard()">📋 Copiar al portapapeles</button>
+    </div>
+
+    <div id="urlOutput" class="url-output" style="display: none;"></div>
+
+    <div id="sectionsContainer"></div>
+
+    <script>
+        let generatedURLs = '';
+
+        function generateURLs() {
+            const sections = {
+                'works': document.getElementById('worksFolder').files,
+                'commissions': document.getElementById('commissionsFolder').files,
+                'exhibitions': document.getElementById('exhibitionsFolder').files
+            };
+
+            let output = '=== URLs para Google Sheets (Google Drive) ===\n\n';
+            output += 'Date | Title | Content | Image URL | Section\n';
+            output += '-----|-------|---------|-----------|--------\n';
+
+            let sectionsHTML = '';
+
+            for (const [sectionName, files] of Object.entries(sections)) {
+                if (files.length > 0) {
+                    sectionsHTML += `<div class="section">
+                        <h3>📂 ${sectionName.toUpperCase()}</h3>
+                        <div class="image-list">`;
+
+                    for (let file of files) {
+                        if (file.type.startsWith('image/')) {
+                            const fileName = file.name;
+                            const title = fileName.replace(/\.[^/.]+$/, '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                            
+                            output += ` | ${title} | Descripción | https://drive.google.com/uc?id=FILE_ID | ${sectionName}\n`;
+
+                            sectionsHTML += `
+                                <div class="image-item">
+                                    <strong>${fileName}</strong><br>
+                                    <input type="text" placeholder="Pega el FILE_ID aquí" 
+                                           onchange="updateURL(this, '${fileName}', '${sectionName}')">
+                                    <br>
+                                    <small>URL: <span id="url-${fileName}">https://drive.google.com/uc?id=FILE_ID</span></small>
+                                    <br>
+                                    <button class="copy-btn" onclick="copyURL('${fileName}')">Copiar URL</button>
+                                </div>`;
+                        }
+                    }
+
+                    sectionsHTML += `</div></div>`;
+                }
+            }
+
+            generatedURLs = output;
+            document.getElementById('urlOutput').textContent = output;
+            document.getElementById('urlOutput').style.display = 'block';
+            document.getElementById('sectionsContainer').innerHTML = sectionsHTML;
+        }
+
+        function updateURL(input, fileName, section) {
+            const fileId = input.value.trim();
+            const url = fileId ? `https://drive.google.com/uc?id=${fileId}` : 'https://drive.google.com/uc?id=FILE_ID';
+            document.getElementById(`url-${fileName}`).textContent = url;
+        }
+
+        function copyURL(fileName) {
+            const url = document.getElementById(`url-${fileName}`).textContent;
+            navigator.clipboard.writeText(url).then(() => {
+                alert('URL copiada al portapapeles');
+            });
+        }
+
+        function copyToClipboard() {
+            if (generatedURLs) {
+                navigator.clipboard.writeText(generatedURLs).then(() => {
+                    alert('URLs copiadas al portapapeles');
+                });
+            } else {
+                alert('Primero genera las URLs');
+            }
+        }
+    </script>
+</body>
+</html> 
