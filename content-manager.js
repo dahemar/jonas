@@ -4,8 +4,8 @@
 
 class ContentManager {
     constructor() {
-        this.spreadsheetId = 'YOUR_SPREADSHEET_ID'; // Replace with actual ID
-        this.apiKey = 'YOUR_API_KEY'; // Replace with actual API key
+        this.spreadsheetId = '1RTrPB8qONlXQG37mRzPJ8aanTlxLGLy3MeYpsyKnmBk'; // Actual ID
+        this.apiKey = 'AIzaSyAKYKOA8prGrSMgWAifEvjLJq9lUqsULzQ'; // Actual API key
         this.baseUrl = 'https://sheets.googleapis.com/v4/spreadsheets/';
     }
 
@@ -165,10 +165,19 @@ class ContentManager {
         const email = this.safeGet(data[0], 1, 'jonas.justen@gmx.de');
         const instagram = this.safeGet(data[0], 2, '@jjuusten');
         
+        // Formatear email como mailto link
+        const emailLink = email ? `<a href="mailto:${email}">${email}</a>` : '';
+        // Formatear instagram como link si empieza con @
+        let instaLink = '';
+        if (instagram) {
+            const handle = instagram.startsWith('@') ? instagram.substring(1) : instagram;
+            instaLink = `<a href="https://www.instagram.com/${handle}/" target="_blank" rel="noopener noreferrer">${instagram}</a>`;
+        }
+        
         container.innerHTML = `
             <h2>${name}</h2>
-            <p>mail. ${email}</p>
-            <p>insta. ${instagram}</p>
+            <p>mail. ${emailLink}</p>
+            <p>insta. ${instaLink}</p>
         `;
     }
 
@@ -205,10 +214,21 @@ class ContentManager {
             const imageUrl = this.safeGet(row, 0);
             const altText = this.safeGet(row, 1);
             const description = this.safeGet(row, 2);
-            const category = this.safeGet(row, 3);
-            
-            // Only require imageUrl, everything else is optional
-            if (imageUrl && imageUrl !== '') {
+            const videoUrl = this.safeGet(row, 2) || this.safeGet(row, 3); // Soporta ambos formatos
+            // Si es un video
+            if (imageUrl === '(video)' && videoUrl) {
+                const post = document.createElement('div');
+                post.className = 'blog-post';
+                post.innerHTML = `<iframe width="100%" height="315" src="${videoUrl}" frameborder="0" allowfullscreen loading="lazy"></iframe>`;
+                container.appendChild(post);
+            } else if (imageUrl === '(link)' && videoUrl) {
+                // Si es un link
+                const post = document.createElement('div');
+                post.className = 'blog-post';
+                post.innerHTML = `<a href="${videoUrl}" target="_blank" rel="noopener noreferrer">${videoUrl}</a>`;
+                container.appendChild(post);
+            } else if (imageUrl && imageUrl !== '') {
+                // Imagen normal
                 const post = this.createImagePost(imageUrl, altText, description);
                 container.appendChild(post);
             }
@@ -320,9 +340,8 @@ document.addEventListener('DOMContentLoaded', function() {
     contentManager.init();
 });
 
-// Pantalla completa para imágenes en móvil
-function enableMobileImageFullscreen() {
-    if (window.innerWidth > 768) return; // Solo en móvil
+// Pantalla completa para imágenes en móvil y escritorio
+function enableImageFullscreen() {
     document.body.addEventListener('click', function(e) {
         const img = e.target.closest('.blog-post img');
         if (!img) return;
@@ -356,4 +375,7 @@ function enableMobileImageFullscreen() {
         document.body.appendChild(overlay);
     });
 }
-document.addEventListener('DOMContentLoaded', enableMobileImageFullscreen); 
+
+// Reemplazar la función solo-móvil por la nueva
+// Pantalla completa para imágenes en móvil y escritorio
+enableImageFullscreen(); 

@@ -180,6 +180,7 @@ In `content-manager.js`, replace:
 1. Go to the "Contact" sheet
 2. Update name, email, and Instagram handle (all optional)
 3. If fields are empty, default values will be used
+4. **Note:** The email will be clickable (mailto) and the Instagram handle will be a link to the corresponding account.
 
 ### Adding Commercial Work
 1. Go to the "Commercial" sheet
@@ -207,12 +208,15 @@ Use relative paths with simple numbers:
 - `works/EXHIBITIONS/4.webp`
 - `commercial/5.webp`
 
+**Note:** All images use `loading="lazy"` for optimization.
+
 ## 🔄 How It Works
 
 1. Website loads
 2. JavaScript fetches data from Google Sheets
 3. Content is dynamically generated
 4. No code changes needed for content updates
+5. Email and Instagram handles in the contact section are clickable
 
 ## ⚠️ Important Notes
 
@@ -222,43 +226,82 @@ Use relative paths with simple numbers:
 - API has rate limits (1000 requests per 100 seconds)
 - Keep spreadsheet publicly viewable
 
-## 🎯 Flexible Content Management
+### Works
 
-### Key Benefits:
-- **Only essential fields are required** - you can leave most columns empty
-- **No broken content** - the website handles missing data gracefully
-- **Easy to use** - just add the minimum required information
-- **Progressive enhancement** - add more details when you have them
+| Image URL              | Description |
+|------------------------|-------------|
+| works/WORKS/1.webp     |             |
+| works/WORKS/2.webp     |             |
+| works/WORKS/3.webp     |             |
+| works/WORKS/4.webp     |             |
+| works/WORKS/5.webp     |             |
+| works/WORKS/6.webp     |             |
+| works/WORKS/7.webp     |             |
+| works/WORKS/8.webp     |             |
+| works/WORKS/9.webp     |             |
+| works/WORKS/10.webp    |             |
+| works/WORKS/11.webp    |             |
 
-### Required vs Optional Fields:
-- **Blog**: Only Image URL required
-- **Works**: Only Image URL required
-- **Music**: Only Project Name required
-- **Radio**: Only Embed Code required
-- **Contact**: All fields optional (uses defaults)
-- **Commercial**: Only Image URL required
+### Commissions
 
-### Examples of Minimal Entries:
-```
-Blog: Just add an image URL
-Works: Just add an image URL
-Music: Just add a project name
-Commercial: Just add an image URL
-```
+| Image URL                  | Description | Video URL/Link/Embed |
+|----------------------------|-------------|----------------------|
+| works/COMMISSIONS/1.webp   |             |                      |
+| works/COMMISSIONS/2.webp   |             |                      |
+| works/COMMISSIONS/3.webp   |             |                      |
+| works/COMMISSIONS/4.webp   |             |                      |
+| works/COMMISSIONS/5.webp   |             |                      |
+| works/COMMISSIONS/6.webp   |             |                      |
+| works/COMMISSIONS/7.webp   |             |                      |
+| works/COMMISSIONS/8.webp   |             |                      |
+| works/COMMISSIONS/9.webp   |             |                      |
+| works/COMMISSIONS/10.webp  |             |                      |
+| works/COMMISSIONS/11.webp  |             |                      |
+| works/COMMISSIONS/12.webp  |             |                      |
+| works/COMMISSIONS/13.webp  |             |                      |
+| (video)                    |             | https://www.youtube.com/embed/oyWsw_F5dBw |
+| (video)                    |             | https://www.youtube.com/embed/tsqOHflO9oo |
+| (video)                    |             | https://www.youtube.com/embed/WKk5hvFGNEA |
+| (video)                    |             | https://www.youtube.com/embed/a3Z8Cf4FTPc |
+| (link)                     |             | http://www.silkeschuster.eu/wp-content/uploads/2023/07/Version-3_-komprmiert.m4v |
+| (video)                    |             | https://www.youtube.com/embed/fHgOTOHAuvE |
+| (video)                    |             | https://www.youtube.com/embed/Kew5Mx0AKFA |
+| (video)                    |             | https://player.vimeo.com/video/900348430 |
+| (video)                    |             | https://www.youtube.com/embed/PGRpuMfU-G0 |
+| (video)                    |             | https://www.youtube.com/embed/SR5oBL6Uwh0 |
+| (video)                    |             | https://www.youtube.com/embed/9lvLPSJv9-k |
 
-## 🆘 Troubleshooting
+### Exhibitions
 
-### Content not loading?
-- Check API key and spreadsheet ID
-- Verify spreadsheet is publicly shared
-- Check browser console for errors
+| Image URL                  | Description |
+|----------------------------|-------------|
+| works/EXHIBITIONS/1.webp   |             |
+| works/EXHIBITIONS/2.webp   |             |
+| works/EXHIBITIONS/3.webp   |             |
+| works/EXHIBITIONS/4.webp   |             |
+| works/EXHIBITIONS/5.webp   |             |
+| works/EXHIBITIONS/6.webp   |             |
+| works/EXHIBITIONS/7.webp   |             |
+| works/EXHIBITIONS/8.webp   |             |
+| works/EXHIBITIONS/9.webp   |             |
+| works/EXHIBITIONS/10.webp  |             |
+| works/EXHIBITIONS/11.webp  |             |
+| works/EXHIBITIONS/12.webp  |             |
+| works/EXHIBITIONS/13.webp  |             |
+| works/EXHIBITIONS/14.webp  |             |
 
-### Images not showing?
-- Verify image URLs are correct
-- Check if images exist in the specified folders
-- Ensure proper file permissions
+### Commercial
 
-### Changes not appearing?
-- Clear browser cache
-- Wait a few minutes for Google Sheets to update
-- Check if API quota is exceeded 
+| Image URL            | Description |
+|----------------------|-------------|
+| commercial/1.webp    |             |
+| commercial/2.webp    |             |
+| commercial/3.webp    |             |
+| commercial/4.webp    |             |
+| commercial/5.webp    |             |
+| commercial/6.webp    |             |
+| commercial/7.webp    |             |
+| commercial/8.webp    |             |
+| commercial/9.webp    |             |
+| commercial/10.webp   |             |
+
