@@ -175,9 +175,13 @@ class ContentManager {
         }
         
         container.innerHTML = `
-            <h2>${name}</h2>
-            <p>mail. ${emailLink}</p>
-            <p>insta. ${instaLink}</p>
+            <div class="contact-project">
+                <h2>${name}</h2>
+                <div class="contact-project-details">
+                    <p>mail. ${emailLink}</p>
+                    <p>insta. ${instaLink}</p>
+                </div>
+            </div>
         `;
     }
 
