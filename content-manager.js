@@ -58,33 +58,17 @@ class ContentManager {
         return 'blog'; // Default
     }
 
-    // Fetch data from Google Sheets con caché localStorage (5 minutos)
+    // Fetch data from Google Sheets
     async fetchSheetData(range) {
-        const cacheKey = `gsheetcache_${range}`;
-        const cacheRaw = localStorage.getItem(cacheKey);
-        const now = Date.now();
-        const maxAge = 5 * 60 * 1000; // 5 minutos
-        if (cacheRaw) {
-            try {
-                const cache = JSON.parse(cacheRaw);
-                if (cache.timestamp && (now - cache.timestamp < maxAge) && Array.isArray(cache.values)) {
-                    return cache.values;
-                }
-            } catch (e) { /* Si hay error, ignora y sigue */ }
-        }
-        // Si no hay caché válido, pide a Google Sheets
         const url = `${this.baseUrl}${this.spreadsheetId}/values/${range}?key=${this.apiKey}`;
         const response = await fetch(url);
+        
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
+        
         const data = await response.json();
-        const values = data.values || [];
-        // Guarda en caché
-        try {
-            localStorage.setItem(cacheKey, JSON.stringify({ values, timestamp: now }));
-        } catch (e) { /* Si falla el caché, ignora */ }
-        return values;
+        return data.values || [];
     }
 
     // Helper function to safely get array values
