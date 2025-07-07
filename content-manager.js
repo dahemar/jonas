@@ -58,17 +58,33 @@ class ContentManager {
         return 'blog'; // Default
     }
 
-    // Fetch data from Google Sheets
+    // Fetch data from Google Sheets con caché localStorage (5 minutos)
     async fetchSheetData(range) {
+        const cacheKey = `gsheetcache_${range}`;
+        const cacheRaw = localStorage.getItem(cacheKey);
+        const now = Date.now();
+        const maxAge = 5 * 60 * 1000; // 5 minutos
+        if (cacheRaw) {
+            try {
+                const cache = JSON.parse(cacheRaw);
+                if (cache.timestamp && (now - cache.timestamp < maxAge) && Array.isArray(cache.values)) {
+                    return cache.values;
+                }
+            } catch (e) { /* Si hay error, ignora y sigue */ }
+        }
+        // Si no hay caché válido, pide a Google Sheets
         const url = `${this.baseUrl}${this.spreadsheetId}/values/${range}?key=${this.apiKey}`;
         const response = await fetch(url);
-        
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
         const data = await response.json();
-        return data.values || [];
+        const values = data.values || [];
+        // Guarda en caché
+        try {
+            localStorage.setItem(cacheKey, JSON.stringify({ values, timestamp: now }));
+        } catch (e) { /* Si falla el caché, ignora */ }
+        return values;
     }
 
     // Helper function to safely get array values
@@ -359,6 +375,8 @@ function enableImageFullscreen() {
         overlay.style.justifyContent = 'center';
         overlay.style.zIndex = 9999;
         overlay.style.flexDirection = 'column';
+        // Cursor X SVG
+        overlay.style.cursor = 'url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'32\' height=\'32\' viewBox=\'0 0 32 32\'><text x=\'8\' y=\'24\' font-size=\'24\'>✕</text></svg>") 16 16, pointer';
         // Imagen en grande
         const fullImg = document.createElement('img');
         fullImg.src = img.src;
