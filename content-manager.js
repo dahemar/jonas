@@ -334,7 +334,7 @@ function enableMobileImageFullscreen() {
         overlay.style.left = 0;
         overlay.style.width = '100vw';
         overlay.style.height = '100vh';
-        overlay.style.background = 'rgba(0,0,0,0.97)';
+        overlay.style.background = '#fff'; // Fondo blanco
         overlay.style.display = 'flex';
         overlay.style.alignItems = 'center';
         overlay.style.justifyContent = 'center';
@@ -346,8 +346,8 @@ function enableMobileImageFullscreen() {
         fullImg.alt = img.alt;
         fullImg.style.maxWidth = '100vw';
         fullImg.style.maxHeight = '80vh';
-        fullImg.style.boxShadow = '0 0 24px #0008';
-        fullImg.style.borderRadius = '6px';
+        fullImg.style.boxShadow = '0 0 24px #0000'; // Sin sombra
+        fullImg.style.borderRadius = '0'; // Bordes rectos
         overlay.appendChild(fullImg);
         // Cerrar overlay al hacer clic en cualquier parte
         overlay.addEventListener('click', function() {
