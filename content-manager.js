@@ -318,4 +318,42 @@ class ContentManager {
 document.addEventListener('DOMContentLoaded', function() {
     const contentManager = new ContentManager();
     contentManager.init();
-}); 
+});
+
+// Pantalla completa para imágenes en móvil
+function enableMobileImageFullscreen() {
+    if (window.innerWidth > 768) return; // Solo en móvil
+    document.body.addEventListener('click', function(e) {
+        const img = e.target.closest('.blog-post img');
+        if (!img) return;
+        e.preventDefault();
+        // Crear overlay
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = 0;
+        overlay.style.left = 0;
+        overlay.style.width = '100vw';
+        overlay.style.height = '100vh';
+        overlay.style.background = 'rgba(0,0,0,0.97)';
+        overlay.style.display = 'flex';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+        overlay.style.zIndex = 9999;
+        overlay.style.flexDirection = 'column';
+        // Imagen en grande
+        const fullImg = document.createElement('img');
+        fullImg.src = img.src;
+        fullImg.alt = img.alt;
+        fullImg.style.maxWidth = '100vw';
+        fullImg.style.maxHeight = '80vh';
+        fullImg.style.boxShadow = '0 0 24px #0008';
+        fullImg.style.borderRadius = '6px';
+        overlay.appendChild(fullImg);
+        // Cerrar overlay al hacer clic en cualquier parte
+        overlay.addEventListener('click', function() {
+            document.body.removeChild(overlay);
+        });
+        document.body.appendChild(overlay);
+    });
+}
+document.addEventListener('DOMContentLoaded', enableMobileImageFullscreen); 

@@ -34,8 +34,8 @@ a {
     padding: 1.5rem;
 }
 
-.content h1 {
-    margin-bottom: 2rem;
+.content > h1 {
+    margin-bottom: 0.5rem;
     font-size: 2rem;
 }
 
@@ -44,7 +44,7 @@ a {
 }
 
 .works-section h2 {
-    margin-bottom: 2rem;
+    margin-bottom: 0.5rem;
     font-size: 2rem;
 }
 
@@ -65,9 +65,10 @@ a {
     margin: 1rem 0;
 }
 
-.blog-post h2 {
+.blog-post h1,
+.blog-post h2,
+.blog-post h3 {
     margin-bottom: 1rem;
-    font-size: 1.5rem;
 }
 
 .blog-post .date {
@@ -124,6 +125,12 @@ a {
     border-bottom: 2px solid #333;
 }
 
+.contact-project {
+    padding: 1.5rem;
+    background-color: #fff;
+    margin-left: 2rem;
+}
+
 /* Mobile responsiveness */
 @media (max-width: 768px) {
     .container {
@@ -144,17 +151,38 @@ a {
     .blog-post {
         padding: 0;
     }
-    .blog-post iframe,
-    .blog-post video {
-        height: 200px;
+    .blog-post img {
+        margin: 0.04rem 0;
+    }
+    .blog-post h1,
+    .blog-post h2,
+    .blog-post h3 {
+        margin-bottom: 0.04rem;
     }
     h1 {
-        font-size: 1.4rem;
+        font-size: 1.5rem;
     }
     h2 {
-        font-size: 1.1rem;
+        font-size: 1.125rem;
     }
     h3 {
-        font-size: 1rem;
+        font-size: 0.75rem;
     }
+    h1, h2, h3 {
+        margin-bottom: 0.3rem;
+    }
+    .contact-project {
+        padding: 1rem;
+        margin-left: 1rem;
+    }
+}
+
+.blog-container h1 {
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+}
+
+.blog-container h2 {
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
 } 
