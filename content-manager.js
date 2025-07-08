@@ -210,11 +210,46 @@ class ContentManager {
             const altText = this.safeGet(row, 1);
             const description = this.safeGet(row, 2);
             const videoUrl = this.safeGet(row, 2) || this.safeGet(row, 3); // Soporta ambos formatos
-            // Si es un video
+            let isVideo = false;
+            let isIframe = false;
+            let videoPath = imageUrl;
             if (imageUrl === '(video)' && videoUrl) {
+                if (videoUrl.endsWith('.mp4')) {
+                    isVideo = true;
+                    videoPath = videoUrl;
+                } else if (
+                    videoUrl.includes('youtube.com') ||
+                    videoUrl.includes('youtu.be') ||
+                    videoUrl.includes('vimeo.com')
+                ) {
+                    isIframe = true;
+                    videoPath = videoUrl;
+                }
+            } else if (imageUrl) {
+                if (imageUrl.endsWith('.mp4')) {
+                    isVideo = true;
+                    videoPath = imageUrl;
+                } else if (
+                    imageUrl.includes('youtube.com') ||
+                    imageUrl.includes('youtu.be') ||
+                    imageUrl.includes('vimeo.com')
+                ) {
+                    isIframe = true;
+                    videoPath = imageUrl;
+                }
+            }
+            if (isVideo && videoPath) {
                 const post = document.createElement('div');
                 post.className = 'blog-post';
-                post.innerHTML = `<iframe width="100%" height="315" src="${videoUrl}" frameborder="0" allowfullscreen loading="lazy"></iframe>`;
+                post.innerHTML = `<video controls width="100%" style="max-width:100%;height:auto;" preload="metadata">
+                    <source src="${videoPath}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>`;
+                container.appendChild(post);
+            } else if (isIframe && videoPath) {
+                const post = document.createElement('div');
+                post.className = 'blog-post';
+                post.innerHTML = `<iframe width="100%" height="315" src="${videoPath}" frameborder="0" allowfullscreen loading="lazy"></iframe>`;
                 container.appendChild(post);
             } else if (imageUrl === '(link)' && videoUrl) {
                 // Si es un link
