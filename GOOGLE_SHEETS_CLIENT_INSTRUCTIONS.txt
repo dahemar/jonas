@@ -1,0 +1,73 @@
+GOOGLE SHEETS CONTENT MANAGEMENT
+===============================
+
+You can update all the content on your website using a single Google Sheet. No coding or GitHub access is needed. Just follow these instructions:
+
+1. OPEN THE GOOGLE SHEET
+------------------------
+- Link: https://docs.google.com/spreadsheets/d/1RTrPB8qONlXQG37mRzPJ8aanTlxLGLy3MeYpsyKnmBk/edit?usp=sharing
+
+2. HOW TO UPDATE CONTENT
+------------------------
+- Each tab at the bottom of the Google Sheet controls a different part of your website: Blog, Works, Commissions, Exhibitions, Music, Radio, Contact, Commercial
+- Each row is an item (e.g., a blog post, a work, a music project).
+- Each column is a property (e.g., image, title, description).
+- You can leave any field empty if you don't want to display it.
+
+3. ADDING IMAGES (GOOGLE DRIVE)
+-------------------------------
+To add images to your website, upload them to Google Drive and use the direct link in the Google Sheet:
+1. Upload your image to Google Drive.
+2. Right-click the image and select "Get link". Set to "Anyone with the link can view".
+3. Copy the file ID from the link (the long string after /d/ and before /view).
+4. In your Google Sheet, paste the following format in the image column:
+   https://drive.google.com/uc?export=view&id=YOUR_FILE_ID
+5. That's it! The image will appear on your website after you refresh the page.
+
+4. CONTENT TYPES
+----------------
+**A. Blog**
+- Columns: Date | Title | Description | Image (Google Drive link)
+- Add a new row for each blog post. All fields are optional.
+
+**B. Works**
+- Columns: Image (Google Drive link) | Alt Text | Description | Category
+- Add a new row for each work. All fields are optional.
+
+**C. Commissions**
+- Columns: Image (Google Drive link) | Alt Text | Description | Video URL
+- Add a new row for each commission. All fields are optional.
+
+**D. Exhibitions**
+- Columns: Image (Google Drive link) | Alt Text | Description | Category
+- Add a new row for each exhibition. All fields are optional.
+
+**E. Music**
+- Columns: Project Name | Bandcamp URL | Soundcloud URL | Nina URL | Description
+- Add a new row for each music project. All fields are optional.
+
+**F. Radio**
+- Columns: Embed Code | Description
+- Add a new row for each radio show. All fields are optional. (For SoundCloud or YouTube, paste the embed code.)
+
+**G. Contact**
+- Columns: Name | Email | Instagram
+- All fields are optional.
+
+**H. Commercial**
+- Columns: Image (Google Drive link) | Alt Text | Description
+- Add a new row for each commercial work. All fields are optional.
+
+5. SEE YOUR CHANGES
+-------------------
+- After editing the Google Sheet, refresh the website to see updates.
+
+6. TIPS & TROUBLESHOOTING
+--------------------------
+- You can leave any field empty if you don't want to display it.
+- If an image doesn't show up, check that the Google Drive link is correct and shared as "Anyone with the link can view".
+- For contact info, email addresses become clickable and Instagram handles become links.
+
+That's it! You can manage your website content and images easily using Google Sheets and Google Drive.
+
+

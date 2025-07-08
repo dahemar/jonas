@@ -91,11 +91,8 @@ class ContentManager {
             const description = this.safeGet(row, 2);
             const imageUrl = this.safeGet(row, 3);
             
-            // Only require imageUrl, everything else is optional
-            if (imageUrl && imageUrl !== '') {
-                const post = this.createBlogPost(date, title, description, imageUrl);
-                container.appendChild(post);
-            }
+            const post = this.createBlogPost(date, title, description, imageUrl);
+            container.appendChild(post);
         });
     }
 
@@ -126,11 +123,8 @@ class ContentManager {
             const ninaUrl = this.safeGet(row, 3);
             const description = this.safeGet(row, 4);
             
-            // Only require project name, everything else is optional
-            if (projectName && projectName !== '') {
-                const project = this.createMusicProject(projectName, bandcampUrl, soundcloudUrl, ninaUrl, description);
-                container.appendChild(project);
-            }
+            const project = this.createMusicProject(projectName, bandcampUrl, soundcloudUrl, ninaUrl, description);
+            container.appendChild(project);
         });
     }
 
@@ -199,11 +193,8 @@ class ContentManager {
             const altText = this.safeGet(row, 1);
             const description = this.safeGet(row, 2);
             
-            // Only require imageUrl, everything else is optional
-            if (imageUrl && imageUrl !== '') {
-                const post = this.createCommercialPost(imageUrl, altText, description);
-                container.appendChild(post);
-            }
+            const post = this.createCommercialPost(imageUrl, altText, description);
+            container.appendChild(post);
         });
     }
 
@@ -263,7 +254,7 @@ class ContentManager {
         
         // Only include description if provided
         if (description) {
-            html += `<p>${description}</p>`;
+            html += `<p>${linkify(description)}</p>`;
         }
         
         post.innerHTML = html;
@@ -279,7 +270,7 @@ class ContentManager {
         
         // Only include description if provided
         if (description) {
-            html += `<p>${description}</p>`;
+            html += `<p>${linkify(description)}</p>`;
         }
         
         // Only include links if provided
@@ -308,7 +299,7 @@ class ContentManager {
         
         // Only include description if provided
         if (description) {
-            html += `<p>${description}</p>`;
+            html += `<p>${linkify(description)}</p>`;
         }
         
         post.innerHTML = html;
@@ -324,7 +315,7 @@ class ContentManager {
         
         // Only include description if provided
         if (description) {
-            html += `<p>${description}</p>`;
+            html += `<p>${linkify(description)}</p>`;
         }
         
         post.innerHTML = html;
@@ -384,4 +375,17 @@ function enableImageFullscreen() {
 
 // Reemplazar la función solo-móvil por la nueva
 // Pantalla completa para imágenes en móvil y escritorio
-enableImageFullscreen(); 
+enableImageFullscreen();
+
+// Add a helper function to convert URLs in text to clickable links
+function linkify(text) {
+    if (!text) return '';
+    // Regex to match URLs (http, https, www)
+    return text.replace(/(https?:\/\/[^\s]+|www\.[^\s]+)/g, function(url) {
+        let href = url;
+        if (!href.match(/^https?:\/\//)) {
+            href = 'http://' + href;
+        }
+        return `<a href="${href}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+    });
+} 
