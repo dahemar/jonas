@@ -274,7 +274,12 @@ class ContentManager {
         
         // Always include image if provided
         if (imageUrl) {
-            html += `<img src="${imageUrl}" alt="${title || 'Blog post'}" loading="lazy">`;
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.alt = title || 'Blog post';
+            img.loading = 'lazy';
+            img.addEventListener('load', () => img.classList.add('loaded'));
+            post.appendChild(img);
         }
         
         // Only include title if provided
@@ -330,7 +335,17 @@ class ContentManager {
         const post = document.createElement('div');
         post.className = 'blog-post';
         
-        let html = `<img src="${imageUrl}" alt="${altText || 'Image'}" loading="lazy">`;
+        let html = '';
+        
+        // Always include image if provided
+        if (imageUrl) {
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.alt = altText || 'Image';
+            img.loading = 'lazy';
+            img.addEventListener('load', () => img.classList.add('loaded'));
+            post.appendChild(img);
+        }
         
         // Only include description if provided
         if (description) {
