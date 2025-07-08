@@ -71,3 +71,4 @@ To add images to your website, upload them to Google Drive and use the direct li
 That's it! You can manage your website content and images easily using Google Sheets and Google Drive.
 
 
+ 

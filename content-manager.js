@@ -92,7 +92,7 @@ class ContentManager {
             const imageUrl = this.safeGet(row, 3);
             
             const post = this.createBlogPost(date, title, description, imageUrl, i);
-            container.appendChild(post);
+                container.appendChild(post);
         });
     }
 
@@ -123,8 +123,8 @@ class ContentManager {
             const ninaUrl = this.safeGet(row, 3);
             const description = this.safeGet(row, 4);
             
-            const project = this.createMusicProject(projectName, bandcampUrl, soundcloudUrl, ninaUrl, description);
-            container.appendChild(project);
+                const project = this.createMusicProject(projectName, bandcampUrl, soundcloudUrl, ninaUrl, description);
+                container.appendChild(project);
         });
     }
 
@@ -193,8 +193,8 @@ class ContentManager {
             const altText = this.safeGet(row, 1);
             const description = this.safeGet(row, 2);
             
-            const post = this.createCommercialPost(imageUrl, altText, description);
-            container.appendChild(post);
+                const post = this.createCommercialPost(imageUrl, altText, description);
+                container.appendChild(post);
         });
     }
 
@@ -425,7 +425,7 @@ function enableImageFullscreen() {
 
 // Reemplazar la función solo-móvil por la nueva
 // Pantalla completa para imágenes en móvil y escritorio
-enableImageFullscreen();
+enableImageFullscreen(); 
 
 // Add a helper function to convert URLs in text to clickable links
 function linkify(text) {
