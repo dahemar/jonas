@@ -85,13 +85,13 @@ class ContentManager {
         
         container.innerHTML = '';
         
-        data.forEach((row, i) => {
+        data.forEach(row => {
             const date = this.safeGet(row, 0);
             const title = this.safeGet(row, 1);
             const description = this.safeGet(row, 2);
             const imageUrl = this.safeGet(row, 3);
             
-            const post = this.createBlogPost(date, title, description, imageUrl, i);
+            const post = this.createBlogPost(date, title, description, imageUrl);
             container.appendChild(post);
         });
     }
@@ -205,7 +205,7 @@ class ContentManager {
         
         container.innerHTML = '';
         
-        data.forEach((row, i) => {
+        data.forEach(row => {
             const imageUrl = this.safeGet(row, 0);
             const altText = this.safeGet(row, 1);
             const description = this.safeGet(row, 2);
@@ -259,14 +259,14 @@ class ContentManager {
                 container.appendChild(post);
             } else if (imageUrl && imageUrl !== '') {
                 // Imagen normal
-                const post = this.createImagePost(imageUrl, altText, description, i);
+                const post = this.createImagePost(imageUrl, altText, description);
                 container.appendChild(post);
             }
         });
     }
 
     // Create blog post element - handles empty fields gracefully
-    createBlogPost(date, title, description, imageUrl, index) {
+    createBlogPost(date, title, description, imageUrl) {
         const post = document.createElement('div');
         post.className = 'blog-post';
         
@@ -274,14 +274,7 @@ class ContentManager {
         
         // Always include image if provided
         if (imageUrl) {
-            const img = document.createElement('img');
-            img.src = imageUrl;
-            img.alt = title || 'Blog post';
-            if (typeof index === 'number' && index !== 0) {
-                img.loading = 'lazy';
-            }
-            img.addEventListener('load', () => img.classList.add('loaded'));
-            post.appendChild(img);
+            html += `<img src="${imageUrl}" alt="${title || 'Blog post'}" loading="lazy">`;
         }
         
         // Only include title if provided
@@ -333,23 +326,11 @@ class ContentManager {
     }
 
     // Create image post element - handles empty fields gracefully
-    createImagePost(imageUrl, altText, description, index) {
+    createImagePost(imageUrl, altText, description) {
         const post = document.createElement('div');
         post.className = 'blog-post';
         
-        let html = '';
-        
-        // Always include image if provided
-        if (imageUrl) {
-            const img = document.createElement('img');
-            img.src = imageUrl;
-            img.alt = altText || 'Image';
-            if (typeof index === 'number' && index !== 0) {
-                img.loading = 'lazy';
-            }
-            img.addEventListener('load', () => img.classList.add('loaded'));
-            post.appendChild(img);
-        }
+        let html = `<img src="${imageUrl}" alt="${altText || 'Image'}" loading="lazy">`;
         
         // Only include description if provided
         if (description) {
