@@ -188,13 +188,12 @@ class ContentManager {
         
         container.innerHTML = '';
         
-        data.forEach(row => {
+        data.forEach((row, i) => {
             const imageUrl = this.safeGet(row, 0);
             const altText = this.safeGet(row, 1);
             const description = this.safeGet(row, 2);
-            
-                const post = this.createCommercialPost(imageUrl, altText, description);
-                container.appendChild(post);
+            const post = this.createCommercialPost(imageUrl, altText, description, i);
+            container.appendChild(post);
         });
     }
 
@@ -357,17 +356,21 @@ class ContentManager {
     }
 
     // Create commercial post element - handles empty fields gracefully
-    createCommercialPost(imageUrl, altText, description) {
+    createCommercialPost(imageUrl, altText, description, index = 0) {
         const post = document.createElement('div');
         post.className = 'blog-post';
-        
-        let html = `<img src="${imageUrl}" alt="${altText || 'Commercial work'}" loading="lazy">`;
-        
-        // Only include description if provided
+        let html = '';
+        if (imageUrl) {
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.alt = altText || 'Commercial work';
+            img.loading = index < 3 ? 'eager' : 'lazy';
+            img.addEventListener('load', () => img.classList.add('loaded'));
+            html += img.outerHTML;
+        }
         if (description) {
             html += `<p>${linkify(description)}</p>`;
         }
-        
         post.innerHTML = html;
         return post;
     }
