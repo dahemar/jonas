@@ -85,13 +85,13 @@ class ContentManager {
         
         container.innerHTML = '';
         
-        data.forEach(row => {
+        data.forEach((row, i) => {
             const date = this.safeGet(row, 0);
             const title = this.safeGet(row, 1);
             const description = this.safeGet(row, 2);
             const imageUrl = this.safeGet(row, 3);
             
-            const post = this.createBlogPost(date, title, description, imageUrl);
+            const post = this.createBlogPost(date, title, description, imageUrl, i);
             container.appendChild(post);
         });
     }
@@ -205,7 +205,7 @@ class ContentManager {
         
         container.innerHTML = '';
         
-        data.forEach(row => {
+        data.forEach((row, i) => {
             const imageUrl = this.safeGet(row, 0);
             const altText = this.safeGet(row, 1);
             const description = this.safeGet(row, 2);
@@ -259,14 +259,14 @@ class ContentManager {
                 container.appendChild(post);
             } else if (imageUrl && imageUrl !== '') {
                 // Imagen normal
-                const post = this.createImagePost(imageUrl, altText, description);
+                const post = this.createImagePost(imageUrl, altText, description, i);
                 container.appendChild(post);
             }
         });
     }
 
     // Create blog post element - handles empty fields gracefully
-    createBlogPost(date, title, description, imageUrl) {
+    createBlogPost(date, title, description, imageUrl, index) {
         const post = document.createElement('div');
         post.className = 'blog-post';
         
@@ -277,7 +277,9 @@ class ContentManager {
             const img = document.createElement('img');
             img.src = imageUrl;
             img.alt = title || 'Blog post';
-            img.loading = 'lazy';
+            if (typeof index === 'number' && index !== 0) {
+                img.loading = 'lazy';
+            }
             img.addEventListener('load', () => img.classList.add('loaded'));
             post.appendChild(img);
         }
@@ -331,7 +333,7 @@ class ContentManager {
     }
 
     // Create image post element - handles empty fields gracefully
-    createImagePost(imageUrl, altText, description) {
+    createImagePost(imageUrl, altText, description, index) {
         const post = document.createElement('div');
         post.className = 'blog-post';
         
@@ -342,7 +344,9 @@ class ContentManager {
             const img = document.createElement('img');
             img.src = imageUrl;
             img.alt = altText || 'Image';
-            img.loading = 'lazy';
+            if (typeof index === 'number' && index !== 0) {
+                img.loading = 'lazy';
+            }
             img.addEventListener('load', () => img.classList.add('loaded'));
             post.appendChild(img);
         }

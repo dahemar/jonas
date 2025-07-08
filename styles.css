@@ -64,12 +64,6 @@ a {
     height: auto;
     margin: 0;
     display: block;
-    opacity: 0;
-    transition: opacity 0.5s cubic-bezier(0.4,0,0.2,1);
-}
-
-.blog-post img.loaded {
-    opacity: 1;
 }
 
 .blog-post h1,
