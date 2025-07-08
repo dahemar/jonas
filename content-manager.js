@@ -155,9 +155,9 @@ class ContentManager {
         
         if (!container || data.length === 0) return;
         
-        const name = this.safeGet(data[0], 0, 'jonas justen');
-        const email = this.safeGet(data[0], 1, 'jonas.justen@gmx.de');
-        const instagram = this.safeGet(data[0], 2, '@jjuusten');
+        const name = this.safeGet(data[0], 0, '');
+        const email = this.safeGet(data[0], 1, '');
+        const instagram = this.safeGet(data[0], 2, '');
         
         // Formatear email como mailto link
         const emailLink = email ? `<a href="mailto:${email}">${email}</a>` : '';
