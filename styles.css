@@ -287,21 +287,53 @@ a:hover {
 
 /* Mobile responsiveness for works table */
 @media (max-width: 768px) {
-    .works-table {
-        font-size: 0.8rem;
+    .works-table-container {
+        width: 100vw;
+        max-width: 100vw;
+        margin-left: 8px;
+        margin-right: 8px;
+        overflow-x: unset;
     }
-    
+    .works-table {
+        width: 100vw;
+        table-layout: fixed;
+        min-width: unset;
+    }
     .works-table th,
     .works-table td {
         padding: 0.3rem 0.2rem;
+        font-size: 0.95rem;
+        word-break: break-word;
     }
-    
-    .works-table th:nth-child(3),
-    .works-table td:nth-child(3) {
-        max-width: 150px;
+    .works-table th:nth-child(1),
+    .works-table td:nth-child(1) {
+        width: 48%;
+        max-width: 48vw;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+    }
+    .works-table th:nth-child(2),
+    .works-table td:nth-child(2) {
+        width: 26%;
+        max-width: 26vw;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .works-table th:nth-child(3),
+    .works-table td:nth-child(3) {
+        width: 26%;
+        max-width: 26vw;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: left;
+    }
+    .mobile-title {
+        color: #111 !important;
+        text-decoration: none !important;
+        cursor: pointer;
     }
     
     .modal-content {

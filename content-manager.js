@@ -130,6 +130,7 @@ class ContentManager {
     renderWorksTable(container) {
         let works = [...this.worksData];
         const { col, dir, userClicked } = this.currentSort || { col: 'date', dir: 'desc', userClicked: false };
+        const isMobile = window.innerWidth <= 768;
         // Sorting logic
         works.sort((a, b) => {
             if (col === 'date') {
@@ -149,9 +150,14 @@ class ContentManager {
         const table = document.createElement('table');
         table.className = 'works-table';
         const thead = document.createElement('thead');
-        // Invert arrow: ↓ for asc, ↑ for desc
         const arrow = dir === 'asc' ? '↓' : '↑';
-        thead.innerHTML = `
+        thead.innerHTML = isMobile ? `
+            <tr>
+                <th data-col="title">title${userClicked && col==='title'?` <span class='sort-arrow'>${arrow}</span>`:''}</th>
+                <th data-col="date">date${userClicked && col==='date'?` <span class='sort-arrow'>${arrow}</span>`:''}</th>
+                <th data-col="type">type${userClicked && col==='type'?` <span class='sort-arrow'>${arrow}</span>`:''}</th>
+            </tr>
+        ` : `
             <tr>
                 <th data-col="title">title${userClicked && col==='title'?` <span class='sort-arrow'>${arrow}</span>`:''}</th>
                 <th data-col="date">date${userClicked && col==='date'?` <span class='sort-arrow'>${arrow}</span>`:''}</th>
@@ -165,20 +171,46 @@ class ContentManager {
         works.forEach((work, index) => {
             const row = document.createElement('tr');
             const hasLink = work.linkUrl && work.linkUrl.trim() !== '';
-            row.innerHTML = `
-                <td>${work.title}</td>
-                <td>${work.date}</td>
-                <td>${work.description}</td>
-                <td>${work.type}</td>
-                <td><a href="#" class="view-work" data-index="${index}" data-has-link="${hasLink}" data-link-url="${work.linkUrl}" data-images="${work.images.join('|')}" data-description="${work.description}">view</a></td>
-            `;
+            if (isMobile) {
+                row.innerHTML = `
+                    <td class="mobile-title" data-index="${index}" data-has-link="${hasLink}" data-link-url="${work.linkUrl}" data-images="${work.images.join('|')}" data-description="${work.description}" style="cursor:pointer;">${work.title}</td>
+                    <td>${work.date}</td>
+                    <td>${work.type}</td>
+                `;
+            } else {
+                row.innerHTML = `
+                    <td>${work.title}</td>
+                    <td>${work.date}</td>
+                    <td>${work.description}</td>
+                    <td>${work.type}</td>
+                    <td><a href="#" class="view-work" data-index="${index}" data-has-link="${hasLink}" data-link-url="${work.linkUrl}" data-images="${work.images.join('|')}" data-description="${work.description}">view</a></td>
+                `;
+            }
             tbody.appendChild(row);
         });
         table.appendChild(tbody);
         container.innerHTML = '';
         container.appendChild(table);
         // Add event listeners for view links
-        this.addWorksTableEventListeners();
+        if (isMobile) {
+            const titleLinks = table.querySelectorAll('.mobile-title');
+            titleLinks.forEach(link => {
+                link.onclick = (e) => {
+                    e.preventDefault();
+                    const hasLink = link.getAttribute('data-has-link') === 'true';
+                    const linkUrl = link.getAttribute('data-link-url');
+                    const images = link.getAttribute('data-images').split('|').filter(img => img);
+                    const description = link.getAttribute('data-description');
+                    if (hasLink) {
+                        window.open(linkUrl, '_blank');
+                    } else if (images.length > 0) {
+                        this.showFullscreenWork(images, description);
+                    }
+                };
+            });
+        } else {
+            this.addWorksTableEventListeners();
+        }
         // Add sorting listeners
         const ths = table.querySelectorAll('th[data-col]');
         ths.forEach(th => {
@@ -294,6 +326,22 @@ class ContentManager {
             leftArrow.style.zIndex = '10000';
             leftArrow.style.opacity = '0.7';
             leftArrow.style.transition = 'opacity 0.3s ease';
+            // Mobile: white circle with shadow
+            if (window.innerWidth <= 768) {
+                leftArrow.style.background = '#fff';
+                leftArrow.style.borderRadius = '50%';
+                leftArrow.style.width = '48px';
+                leftArrow.style.height = '48px';
+                leftArrow.style.display = 'flex';
+                leftArrow.style.alignItems = 'center';
+                leftArrow.style.justifyContent = 'center';
+                leftArrow.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
+                leftArrow.style.fontSize = '2rem';
+                leftArrow.style.border = '1px solid #eee';
+                leftArrow.style.lineHeight = '48px';
+                leftArrow.style.textAlign = 'center';
+                leftArrow.style.padding = '0';
+            }
             
             leftArrow.addEventListener('mouseenter', () => {
                 leftArrow.style.opacity = '1';
@@ -325,6 +373,22 @@ class ContentManager {
             rightArrow.style.zIndex = '10000';
             rightArrow.style.opacity = '0.7';
             rightArrow.style.transition = 'opacity 0.3s ease';
+            // Mobile: white circle with shadow
+            if (window.innerWidth <= 768) {
+                rightArrow.style.background = '#fff';
+                rightArrow.style.borderRadius = '50%';
+                rightArrow.style.width = '48px';
+                rightArrow.style.height = '48px';
+                rightArrow.style.display = 'flex';
+                rightArrow.style.alignItems = 'center';
+                rightArrow.style.justifyContent = 'center';
+                rightArrow.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
+                rightArrow.style.fontSize = '2rem';
+                rightArrow.style.border = '1px solid #eee';
+                rightArrow.style.lineHeight = '48px';
+                rightArrow.style.textAlign = 'center';
+                rightArrow.style.padding = '0';
+            }
             
             rightArrow.addEventListener('mouseenter', () => {
                 rightArrow.style.opacity = '1';
