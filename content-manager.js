@@ -149,7 +149,8 @@ class ContentManager {
         const table = document.createElement('table');
         table.className = 'works-table';
         const thead = document.createElement('thead');
-        const arrow = dir === 'asc' ? '↑' : '↓';
+        // Invert arrow: ↓ for asc, ↑ for desc
+        const arrow = dir === 'asc' ? '↓' : '↑';
         thead.innerHTML = `
             <tr>
                 <th data-col="title">title${userClicked && col==='title'?` <span class='sort-arrow'>${arrow}</span>`:''}</th>
@@ -368,7 +369,7 @@ class ContentManager {
         // Add description if available
         if (description) {
             const caption = document.createElement('div');
-            caption.style.marginTop = '1rem';
+            caption.style.marginTop = '2.5rem';
             caption.style.padding = '0 2rem';
             caption.style.textAlign = 'center';
             caption.style.color = '#333';
