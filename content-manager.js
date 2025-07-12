@@ -107,6 +107,302 @@ class ContentManager {
         this.loadSectionContent('exhibitions-posts', exhibitionsData);
     }
 
+    // Load works table content - unified format
+    async loadWorksTableContent() {
+        const worksData = await this.fetchSheetData('Works!A2:F');
+        
+        const container = document.getElementById('works-table-container');
+        if (!container) return;
+        
+        const allWorks = [];
+        
+        worksData.forEach(row => {
+            const title = this.safeGet(row, 0) || 'Untitled';
+            const date = this.safeGet(row, 1) || '';
+            const description = this.safeGet(row, 2) || '';
+            const type = this.safeGet(row, 3) || '';
+            const imageUrls = this.safeGet(row, 4) || '';
+            const linkUrl = this.safeGet(row, 5) || '';
+            
+            // Split multiple images by comma
+            const images = imageUrls.split(',').map(url => url.trim()).filter(url => url);
+            
+            allWorks.push({
+                title,
+                date,
+                description,
+                type,
+                images,
+                linkUrl
+            });
+        });
+        
+        // Sort by date (newest first)
+        allWorks.sort((a, b) => {
+            if (!a.date && !b.date) return 0;
+            if (!a.date) return 1;
+            if (!b.date) return -1;
+            return new Date(b.date) - new Date(a.date);
+        });
+        
+        this.createWorksTable(container, allWorks);
+    }
+
+    // Create works table
+    createWorksTable(container, works) {
+        const table = document.createElement('table');
+        table.className = 'works-table';
+        
+        // Create table header
+        const thead = document.createElement('thead');
+        thead.innerHTML = `
+            <tr>
+                <th>title</th>
+                <th>date</th>
+                <th>description</th>
+                <th>type</th>
+                <th>𓁹</th>
+            </tr>
+        `;
+        table.appendChild(thead);
+        
+        // Create table body
+        const tbody = document.createElement('tbody');
+        works.forEach((work, index) => {
+            const row = document.createElement('tr');
+            
+            // Determine if it has a link URL
+            const hasLink = work.linkUrl && work.linkUrl.trim() !== '';
+            
+            row.innerHTML = `
+                <td>${work.title}</td>
+                <td>${work.date}</td>
+                <td>${work.description}</td>
+                <td>${work.type}</td>
+                <td><a href="#" class="view-work" data-index="${index}" data-has-link="${hasLink}" data-link-url="${work.linkUrl}" data-images="${work.images.join('|')}" data-description="${work.description}">view</a></td>
+            `;
+            tbody.appendChild(row);
+        });
+        table.appendChild(tbody);
+        
+        container.innerHTML = '';
+        container.appendChild(table);
+        
+        // Add event listeners for view links
+        this.addWorksTableEventListeners();
+    }
+
+    // Add event listeners for works table
+    addWorksTableEventListeners() {
+        const viewLinks = document.querySelectorAll('.view-work');
+        viewLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const hasLink = link.getAttribute('data-has-link') === 'true';
+                const linkUrl = link.getAttribute('data-link-url');
+                const images = link.getAttribute('data-images').split('|').filter(img => img);
+                const description = link.getAttribute('data-description');
+                
+                if (hasLink) {
+                    // Open link directly in new tab
+                    window.open(linkUrl, '_blank');
+                } else if (images.length > 0) {
+                    // Show fullscreen modal for images
+                    this.showFullscreenWork(images, description);
+                }
+            });
+        });
+    }
+
+    // Show fullscreen work modal - matching blog style with image navigation
+    showFullscreenWork(images, description) {
+        if (!images || images.length === 0) return;
+        
+        let currentImageIndex = 0;
+        
+        // Create overlay like in blog
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = 0;
+        overlay.style.left = 0;
+        overlay.style.width = '100vw';
+        overlay.style.height = '100vh';
+        overlay.style.background = '#fff'; // White background like blog
+        overlay.style.display = 'flex';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+        overlay.style.zIndex = 9999;
+        overlay.style.flexDirection = 'column';
+        // X cursor like blog
+        overlay.style.cursor = 'url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'32\' height=\'32\' viewBox=\'0 0 32 32\'><text x=\'8\' y=\'24\' font-size=\'24\'>✕</text></svg>") 16 16, pointer';
+        
+        // Main container
+        const mainContainer = document.createElement('div');
+        mainContainer.style.position = 'relative';
+        mainContainer.style.display = 'flex';
+        mainContainer.style.flexDirection = 'column';
+        mainContainer.style.alignItems = 'center';
+        mainContainer.style.justifyContent = 'center';
+        mainContainer.style.maxWidth = '100vw';
+        mainContainer.style.maxHeight = '100vh';
+        
+        // Image container
+        const imageContainer = document.createElement('div');
+        imageContainer.style.position = 'relative';
+        imageContainer.style.display = 'flex';
+        imageContainer.style.alignItems = 'center';
+        imageContainer.style.justifyContent = 'center';
+        imageContainer.style.maxWidth = '100vw';
+        imageContainer.style.maxHeight = '80vh';
+        
+        // Create image element
+        const img = document.createElement('img');
+        img.src = images[currentImageIndex];
+        img.alt = 'Work';
+        img.style.maxWidth = '100vw';
+        img.style.maxHeight = '80vh';
+        img.style.boxShadow = '0 0 24px #0000'; // No shadow like blog
+        img.style.borderRadius = '0'; // Straight borders like blog
+        img.style.transition = 'opacity 0.3s ease';
+        
+        imageContainer.appendChild(img);
+        
+        // Navigation arrows (only show if multiple images)
+        if (images.length > 1) {
+            // Left arrow
+            const leftArrow = document.createElement('div');
+            leftArrow.innerHTML = '‹';
+            leftArrow.style.position = 'absolute';
+            leftArrow.style.left = '20px';
+            leftArrow.style.top = '50%';
+            leftArrow.style.transform = 'translateY(-50%)';
+            leftArrow.style.fontSize = '3rem';
+            leftArrow.style.color = '#333';
+            leftArrow.style.cursor = 'pointer';
+            leftArrow.style.userSelect = 'none';
+            leftArrow.style.zIndex = '10000';
+            leftArrow.style.opacity = '0.7';
+            leftArrow.style.transition = 'opacity 0.3s ease';
+            
+            leftArrow.addEventListener('mouseenter', () => {
+                leftArrow.style.opacity = '1';
+            });
+            
+            leftArrow.addEventListener('mouseleave', () => {
+                leftArrow.style.opacity = '0.7';
+            });
+            
+            leftArrow.addEventListener('click', (e) => {
+                e.stopPropagation();
+                currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+                img.src = images[currentImageIndex];
+            });
+            
+            imageContainer.appendChild(leftArrow);
+            
+            // Right arrow
+            const rightArrow = document.createElement('div');
+            rightArrow.innerHTML = '›';
+            rightArrow.style.position = 'absolute';
+            rightArrow.style.right = '20px';
+            rightArrow.style.top = '50%';
+            rightArrow.style.transform = 'translateY(-50%)';
+            rightArrow.style.fontSize = '3rem';
+            rightArrow.style.color = '#333';
+            rightArrow.style.cursor = 'pointer';
+            rightArrow.style.userSelect = 'none';
+            rightArrow.style.zIndex = '10000';
+            rightArrow.style.opacity = '0.7';
+            rightArrow.style.transition = 'opacity 0.3s ease';
+            
+            rightArrow.addEventListener('mouseenter', () => {
+                rightArrow.style.opacity = '1';
+            });
+            
+            rightArrow.addEventListener('mouseleave', () => {
+                rightArrow.style.opacity = '0.7';
+            });
+            
+            rightArrow.addEventListener('click', (e) => {
+                e.stopPropagation();
+                currentImageIndex = (currentImageIndex + 1) % images.length;
+                img.src = images[currentImageIndex];
+            });
+            
+            imageContainer.appendChild(rightArrow);
+            
+            // Image counter
+            const counter = document.createElement('div');
+            counter.style.position = 'absolute';
+            counter.style.bottom = '-30px';
+            counter.style.left = '50%';
+            counter.style.transform = 'translateX(-50%)';
+            counter.style.fontSize = '0.9rem';
+            counter.style.color = '#666';
+            counter.style.userSelect = 'none';
+            
+            const updateCounter = () => {
+                counter.textContent = `${currentImageIndex + 1} / ${images.length}`;
+            };
+            updateCounter();
+            
+            imageContainer.appendChild(counter);
+            
+            // Update counter when navigating
+            leftArrow.addEventListener('click', updateCounter);
+            rightArrow.addEventListener('click', updateCounter);
+        }
+        
+        mainContainer.appendChild(imageContainer);
+        
+        // Add description if available
+        if (description) {
+            const caption = document.createElement('div');
+            caption.style.marginTop = '1rem';
+            caption.style.padding = '0 2rem';
+            caption.style.textAlign = 'center';
+            caption.style.color = '#333';
+            caption.style.fontSize = '1rem';
+            caption.style.lineHeight = '1.5';
+            caption.style.maxWidth = '80vw';
+            caption.innerHTML = linkify(description);
+            mainContainer.appendChild(caption);
+        }
+        
+        overlay.appendChild(mainContainer);
+        
+        // Close overlay on click (but not on arrows)
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay || e.target === mainContainer) {
+                document.body.removeChild(overlay);
+            }
+        });
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function handleKeydown(e) {
+            if (images.length > 1) {
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+                    img.src = images[currentImageIndex];
+                    if (typeof updateCounter === 'function') updateCounter();
+                } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    currentImageIndex = (currentImageIndex + 1) % images.length;
+                    img.src = images[currentImageIndex];
+                    if (typeof updateCounter === 'function') updateCounter();
+                }
+            }
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                document.body.removeChild(overlay);
+                document.removeEventListener('keydown', handleKeydown);
+            }
+        });
+        
+        document.body.appendChild(overlay);
+    }
+
     // Load music content - only project name is required
     async loadMusicContent() {
         const data = await this.fetchSheetData('Music!A2:E');

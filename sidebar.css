@@ -36,34 +36,7 @@
     text-decoration-color: #0066cc;
 }
 
-.sidebar .submenu ul {
-    margin-left: 1rem;
-    border-left: 1px solid #000;
-    padding-left: 1rem;
-    opacity: 0;
-    visibility: hidden;
-    max-height: 0;
-    overflow: hidden;
-    transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), visibility 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), max-height 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
 
-/* Desktop hover effect only */
-@media (min-width: 769px) {
-    .sidebar .submenu:hover ul {
-        opacity: 1;
-        visibility: visible;
-        max-height: 200px;
-    }
-}
-
-.sidebar .submenu ul li {
-    margin-bottom: 0.3rem;
-}
-
-.sidebar .submenu ul li a {
-    font-size: 0.9rem;
-    padding: 0.3rem 0;
-}
 
 @media (max-width: 768px) {
     .sidebar {
@@ -108,9 +81,7 @@
         animation: none !important;
     }
     
-    .sidebar .submenu ul {
-        display: none;
-    }
+
     
     /* Remove all hover and active effects on mobile */
     .sidebar a:hover,

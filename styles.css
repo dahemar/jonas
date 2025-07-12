@@ -200,4 +200,113 @@ a:hover {
 .blog-container h2 {
     margin-bottom: 0.5rem;
     font-size: 1.5rem;
+}
+
+/* Works Table Styles */
+.works-table-container {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.works-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-family: 'Inter', sans-serif;
+}
+
+.works-table th,
+.works-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    vertical-align: top;
+}
+
+.works-table th:nth-child(1),
+.works-table td:nth-child(1) {
+    width: 20%;
+}
+
+.works-table th:nth-child(2),
+.works-table td:nth-child(2) {
+    width: 15%;
+}
+
+.works-table th:nth-child(3),
+.works-table td:nth-child(3) {
+    width: 40%;
+}
+
+.works-table th:nth-child(4),
+.works-table td:nth-child(4) {
+    width: 15%;
+}
+
+.works-table th:nth-child(5),
+.works-table td:nth-child(5) {
+    width: 10%;
+    text-align: center;
+}
+
+.works-table th {
+    font-weight: 600;
+    color: #333;
+    background-color: #f0f0f0;
+}
+
+/* Hover effect for table rows - desktop only */
+@media (min-width: 769px) {
+    .works-table tbody tr:hover {
+        background-color: #fafafa;
+        transition: background-color 0.2s ease;
+    }
+}
+
+.works-table td {
+    vertical-align: top;
+}
+
+.works-table .view-work {
+    color: #0066cc;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.works-table .view-work:hover {
+    text-decoration: none;
+}
+
+
+
+/* Mobile responsiveness for works table */
+@media (max-width: 768px) {
+    .works-table {
+        font-size: 0.8rem;
+    }
+    
+    .works-table th,
+    .works-table td {
+        padding: 0.3rem 0.2rem;
+    }
+    
+    .works-table th:nth-child(3),
+    .works-table td:nth-child(3) {
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 5% auto;
+        padding: 1rem;
+    }
+    
+    .close-modal {
+        top: 0.5rem;
+        right: 1rem;
+        font-size: 1.5rem;
+    }
 } 
