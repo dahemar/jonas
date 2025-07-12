@@ -24,8 +24,11 @@
     padding: 0.5rem 0;
 }
 
-.sidebar a:hover {
-    margin-left: 0.8rem;
+/* Removed hover animation */
+
+.sidebar a.active {
+    text-decoration: underline;
+    color: #0066cc;
 }
 
 .sidebar .submenu ul {
@@ -80,7 +83,6 @@
     .sidebar a:hover,
     .sidebar a:active,
     .sidebar a:focus {
-        margin-left: 0;
         background-color: transparent;
         transition: none !important;
         animation: none !important;

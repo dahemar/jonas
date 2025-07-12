@@ -21,7 +21,6 @@
         </nav>
 
         <main class="content">
-            <h1>blog</h1>
             <div id="blog-posts" class="blog-container">
                 <div class="blog-post">
                     <img src="blog/1.webp" alt="IMG_2358">
@@ -51,5 +50,19 @@
         </main>
     </div>
     <script src="content-manager.js"></script>
+    <script>
+        // Marcar el enlace activo en el menú
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = 'blog';
+            const sidebarLinks = document.querySelectorAll('.sidebar a');
+            
+            sidebarLinks.forEach(link => {
+                if (link.getAttribute('href') === 'index.html#blog' || 
+                    (currentPage === 'blog' && link.getAttribute('href') === 'index.html#blog')) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html> 

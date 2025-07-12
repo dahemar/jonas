@@ -291,9 +291,9 @@ class ContentManager {
             html += `<p class="date">${date}</p>`;
         }
         
-        // Only include description if provided
+        // Store description as data attribute for fullscreen view
         if (description) {
-            html += `<p>${linkify(description)}</p>`;
+            post.setAttribute('data-description', description);
         }
         
         post.innerHTML = html;
@@ -346,9 +346,9 @@ class ContentManager {
             html += img.outerHTML;
         }
         
-        // Only include description if provided
+        // Store description as data attribute for fullscreen view
         if (description) {
-            html += `<p>${linkify(description)}</p>`;
+            post.setAttribute('data-description', description);
         }
         
         post.innerHTML = html;
@@ -368,8 +368,9 @@ class ContentManager {
             img.addEventListener('load', () => img.classList.add('loaded'));
             html += img.outerHTML;
         }
+        // Store description as data attribute for fullscreen view
         if (description) {
-            html += `<p>${linkify(description)}</p>`;
+            post.setAttribute('data-description', description);
         }
         post.innerHTML = html;
         return post;
@@ -394,6 +395,11 @@ function enableImageFullscreen() {
         const img = e.target.closest('.blog-post img');
         if (!img) return;
         e.preventDefault();
+        
+        // Buscar la descripción en el atributo data-description
+        const blogPost = img.closest('.blog-post');
+        const description = blogPost ? blogPost.getAttribute('data-description') || '' : '';
+        
         // Crear overlay
         const overlay = document.createElement('div');
         overlay.style.position = 'fixed';
@@ -409,6 +415,16 @@ function enableImageFullscreen() {
         overlay.style.flexDirection = 'column';
         // Cursor X SVG
         overlay.style.cursor = 'url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'32\' height=\'32\' viewBox=\'0 0 32 32\'><text x=\'8\' y=\'24\' font-size=\'24\'>✕</text></svg>") 16 16, pointer';
+        
+        // Contenedor para imagen y descripción
+        const contentContainer = document.createElement('div');
+        contentContainer.style.display = 'flex';
+        contentContainer.style.flexDirection = 'column';
+        contentContainer.style.alignItems = 'center';
+        contentContainer.style.justifyContent = 'center';
+        contentContainer.style.maxWidth = '100vw';
+        contentContainer.style.maxHeight = '100vh';
+        
         // Imagen en grande
         const fullImg = document.createElement('img');
         fullImg.src = img.src;
@@ -417,7 +433,24 @@ function enableImageFullscreen() {
         fullImg.style.maxHeight = '80vh';
         fullImg.style.boxShadow = '0 0 24px #0000'; // Sin sombra
         fullImg.style.borderRadius = '0'; // Bordes rectos
-        overlay.appendChild(fullImg);
+        contentContainer.appendChild(fullImg);
+        
+        // Pie de foto con descripción
+        if (description) {
+            const caption = document.createElement('div');
+            caption.style.marginTop = '1rem';
+            caption.style.padding = '0 2rem';
+            caption.style.textAlign = 'center';
+            caption.style.color = '#333';
+            caption.style.fontSize = '1rem';
+            caption.style.lineHeight = '1.5';
+            caption.style.maxWidth = '80vw';
+            caption.innerHTML = linkify(description);
+            contentContainer.appendChild(caption);
+        }
+        
+        overlay.appendChild(contentContainer);
+        
         // Cerrar overlay al hacer clic en cualquier parte
         overlay.addEventListener('click', function() {
             document.body.removeChild(overlay);

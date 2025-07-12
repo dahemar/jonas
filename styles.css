@@ -12,7 +12,7 @@
 }
 
 body {
-    font-family: 'Template Gothic', 'Courier New', monospace;
+    font-family: Arial, sans-serif;
     line-height: 1.6;
     color: #333;
     background-color: #fff;
@@ -20,6 +20,10 @@ body {
 
 a {
     color: inherit;
+}
+
+a:hover {
+    text-decoration: none;
 }
 
 .container {
@@ -118,18 +122,25 @@ a {
     display: inline-block;
     margin-top: 0.5rem;
     color: #333;
-    text-decoration: none;
-    border-bottom: 1px solid #333;
+    text-decoration: underline;
 }
 
 .music-link:hover {
-    border-bottom: 2px solid #333;
+    text-decoration: none;
 }
 
 .contact-project {
     padding: 1.5rem;
     background-color: #fff;
     margin-left: 2rem;
+}
+
+.contact-project a {
+    text-decoration: underline;
+}
+
+.contact-project a:hover {
+    text-decoration: none;
 }
 
 /* Mobile responsiveness */

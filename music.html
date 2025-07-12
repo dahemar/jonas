@@ -21,7 +21,6 @@
         </nav>
 
         <main class="content">
-            <h1>music</h1>
             <div class="section-content">
                 <div class="music-projects">
                     <div class="music-project">
@@ -49,5 +48,18 @@
         </main>
     </div>
     <script src="content-manager.js"></script>
+    <script>
+        // Marcar el enlace activo en el menú
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = 'music';
+            const sidebarLinks = document.querySelectorAll('.sidebar a');
+            
+            sidebarLinks.forEach(link => {
+                if (link.getAttribute('href') === 'music.html') {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html> 

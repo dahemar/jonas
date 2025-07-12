@@ -21,7 +21,6 @@
         </nav>
 
         <main class="content">
-            <h1>contact</h1>
             <div class="section-content">
                 <div class="contact-project">
                     <h2>jonas justen</h2>
@@ -32,5 +31,18 @@
         </main>
     </div>
     <script src="content-manager.js"></script>
+    <script>
+        // Marcar el enlace activo en el menú
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = 'contact';
+            const sidebarLinks = document.querySelectorAll('.sidebar a');
+            
+            sidebarLinks.forEach(link => {
+                if (link.getAttribute('href') === 'contact.html') {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html> 
