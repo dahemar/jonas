@@ -309,21 +309,36 @@ a:hover {
     .works-table th,
     .works-table td {
         padding: 0.3rem 0.2rem;
-        font-size: 0.95rem;
+        font-size: 0.82rem;
         word-break: break-word;
         box-sizing: border-box;
     }
     .works-table th:nth-child(1),
-    .works-table td:nth-child(1),
-    .works-table th:nth-child(2),
-    .works-table td:nth-child(2),
-    .works-table th:nth-child(3),
-    .works-table td:nth-child(3) {
-        width: 33.33%;
-        max-width: 33.33%;
+    .works-table td:nth-child(1) {
+        width: 60%;
+        max-width: 60%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        box-sizing: border-box;
+    }
+    .works-table th:nth-child(2),
+    .works-table td:nth-child(2) {
+        width: 20%;
+        max-width: 20%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        box-sizing: border-box;
+    }
+    .works-table th:nth-child(3),
+    .works-table td:nth-child(3) {
+        width: 20%;
+        max-width: 20%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: left;
         box-sizing: border-box;
     }
     .mobile-title {
