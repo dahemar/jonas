@@ -46,6 +46,10 @@
                 if (link.getAttribute('href') === 'exhibitions.html') {
                     link.classList.add('active');
                 }
+                // También marcar works como activo cuando estás en una subpágina
+                if (link.getAttribute('href') === 'works.html' && link.classList.contains('works-link')) {
+                    link.classList.add('active');
+                }
             });
             
             // Handle mobile works navigation
