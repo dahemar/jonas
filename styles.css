@@ -277,6 +277,12 @@ a:hover {
     text-decoration: none;
 }
 
+.sort-arrow {
+  font-size: 1.1em;
+  margin-left: 0.2em;
+  vertical-align: middle;
+  color: #888;
+}
 
 
 /* Mobile responsiveness for works table */

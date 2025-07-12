@@ -110,70 +110,60 @@ class ContentManager {
     // Load works table content - unified format
     async loadWorksTableContent() {
         const worksData = await this.fetchSheetData('Works!A2:F');
-        
         const container = document.getElementById('works-table-container');
         if (!container) return;
-        
-        const allWorks = [];
-        
-        worksData.forEach(row => {
+        this.worksData = worksData.map(row => {
             const title = this.safeGet(row, 0) || 'Untitled';
             const date = this.safeGet(row, 1) || '';
             const description = this.safeGet(row, 2) || '';
             const type = this.safeGet(row, 3) || '';
             const imageUrls = this.safeGet(row, 4) || '';
             const linkUrl = this.safeGet(row, 5) || '';
-            
-            // Split multiple images by comma
             const images = imageUrls.split(',').map(url => url.trim()).filter(url => url);
-            
-            allWorks.push({
-                title,
-                date,
-                description,
-                type,
-                images,
-                linkUrl
-            });
+            return { title, date, description, type, images, linkUrl };
         });
-        
-        // Sort by date (newest first)
-        allWorks.sort((a, b) => {
-            if (!a.date && !b.date) return 0;
-            if (!a.date) return 1;
-            if (!b.date) return -1;
-            return new Date(b.date) - new Date(a.date);
-        });
-        
-        this.createWorksTable(container, allWorks);
+        // Default sort: date descending, no arrow
+        this.currentSort = { col: 'date', dir: 'desc', userClicked: false };
+        this.renderWorksTable(container);
     }
 
-    // Create works table
-    createWorksTable(container, works) {
+    renderWorksTable(container) {
+        let works = [...this.worksData];
+        const { col, dir, userClicked } = this.currentSort || { col: 'date', dir: 'desc', userClicked: false };
+        // Sorting logic
+        works.sort((a, b) => {
+            if (col === 'date') {
+                if (!a.date && !b.date) return 0;
+                if (!a.date) return dir === 'asc' ? -1 : 1;
+                if (!b.date) return dir === 'asc' ? 1 : -1;
+                return dir === 'asc' ? (new Date(a.date) - new Date(b.date)) : (new Date(b.date) - new Date(a.date));
+            } else {
+                const av = (a[col] || '').toLowerCase();
+                const bv = (b[col] || '').toLowerCase();
+                if (av < bv) return dir === 'asc' ? -1 : 1;
+                if (av > bv) return dir === 'asc' ? 1 : -1;
+                return 0;
+            }
+        });
+        // Table rendering
         const table = document.createElement('table');
         table.className = 'works-table';
-        
-        // Create table header
         const thead = document.createElement('thead');
+        const arrow = dir === 'asc' ? '↑' : '↓';
         thead.innerHTML = `
             <tr>
-                <th>title</th>
-                <th>date</th>
-                <th>description</th>
-                <th>type</th>
+                <th data-col="title">title${userClicked && col==='title'?` <span class='sort-arrow'>${arrow}</span>`:''}</th>
+                <th data-col="date">date${userClicked && col==='date'?` <span class='sort-arrow'>${arrow}</span>`:''}</th>
+                <th data-col="description">description${userClicked && col==='description'?` <span class='sort-arrow'>${arrow}</span>`:''}</th>
+                <th data-col="type">type${userClicked && col==='type'?` <span class='sort-arrow'>${arrow}</span>`:''}</th>
                 <th>𓁹</th>
             </tr>
         `;
         table.appendChild(thead);
-        
-        // Create table body
         const tbody = document.createElement('tbody');
         works.forEach((work, index) => {
             const row = document.createElement('tr');
-            
-            // Determine if it has a link URL
             const hasLink = work.linkUrl && work.linkUrl.trim() !== '';
-            
             row.innerHTML = `
                 <td>${work.title}</td>
                 <td>${work.date}</td>
@@ -184,12 +174,32 @@ class ContentManager {
             tbody.appendChild(row);
         });
         table.appendChild(tbody);
-        
         container.innerHTML = '';
         container.appendChild(table);
-        
         // Add event listeners for view links
         this.addWorksTableEventListeners();
+        // Add sorting listeners
+        const ths = table.querySelectorAll('th[data-col]');
+        ths.forEach(th => {
+            th.style.cursor = 'pointer';
+            th.onclick = () => {
+                const col = th.getAttribute('data-col');
+                let dir = 'asc';
+                if (this.currentSort && this.currentSort.col === col) {
+                    dir = this.currentSort.dir === 'asc' ? 'desc' : 'asc';
+                }
+                this.currentSort = { col, dir, userClicked: true };
+                this.renderWorksTable(container);
+            };
+        });
+    }
+
+    // Create works table
+    createWorksTable(container, works) {
+        // For compatibility, just store and call render
+        this.worksData = works;
+        if (!this.currentSort) this.currentSort = { col: 'date', dir: 'desc' };
+        this.renderWorksTable(container);
     }
 
     // Add event listeners for works table
