@@ -30,55 +30,14 @@
         <main class="content">
             <section class="works-section" id="exhibitions">
                 <div id="exhibitions-posts" class="blog-container">
-                    <div class="blog-post">
-                        <img src="works/EXHIBITIONS/1.webp" alt="2019 westfaelischerkunstverein jahresgabe1 ueberschaetztespezies">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/EXHIBITIONS/2.webp" alt="KVHBF 2020 lunchshow 09 jonasjusten 1">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/EXHIBITIONS/3.webp" alt="KVHBF 2020 lunchshow 09 jonasjusten 2">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/EXHIBITIONS/4.webp" alt="Kunstakademie classofTD 2 23">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/EXHIBITIONS/5.webp" alt="jonasjusten spielohnegrenzen westfaelischerkunstverein2019">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/EXHIBITIONS/6.webp" alt="jonasjusten verflixterblitzer2 westfaelischerkunstverein2019">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/EXHIBITIONS/7.webp" alt="reading food bonnerKV 6 23 1">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/EXHIBITIONS/8.webp" alt="reading food bonnerKV 6 23 2">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/EXHIBITIONS/9.webp" alt="reading food bonnerKV 6 23 3">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/EXHIBITIONS/10.webp" alt="reading food bonnerKV 6 23 4">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/EXHIBITIONS/11.webp" alt="reading food bonnerKV 6 23 5">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/EXHIBITIONS/12.webp" alt="wieder fruehling bonnerKV 3 23 1">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/EXHIBITIONS/13.webp" alt="wieder fruehling bonnerKV 3 23 2">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/EXHIBITIONS/14.webp" alt="wieder fruehling bonnerKV 3 23 3">
-                    </div>
+                    <!-- Content will be loaded dynamically from Google Sheets -->
                 </div>
             </section>
         </main>
     </div>
     <script src="content-manager.js"></script>
     <script>
-        // Marcar el enlace activo en el menú
+        // Marcar el enlace activo en el menú y cargar contenido
         document.addEventListener('DOMContentLoaded', function() {
             const currentPage = 'exhibitions';
             const sidebarLinks = document.querySelectorAll('.sidebar a');
@@ -99,6 +58,10 @@
                     }
                 });
             }
+            
+            // Load exhibitions content from Google Sheets
+            const contentManager = new ContentManager();
+            contentManager.loadExhibitionsContent();
         });
     </script>
 </body>

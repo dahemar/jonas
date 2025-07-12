@@ -30,46 +30,14 @@
         <main class="content">
             <section class="works-section" id="works">
                 <div id="works-posts" class="blog-container">
-                    <div class="blog-post">
-                        <img src="works/WORKS/1.webp" alt="03 210207">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/WORKS/2.webp" alt="03 K8C5735">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/WORKS/3.webp" alt="04 210215">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/WORKS/4.webp" alt="06 img20231026 16310661">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/WORKS/5.webp" alt="08 IMG 6452 bright">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/WORKS/6.webp" alt="question mark">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/WORKS/7.webp" alt="question mark 0001">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/WORKS/8.webp" alt="question mark 0002">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/WORKS/9.webp" alt="question mark 0003">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/WORKS/10.webp" alt="question mark 0004">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/WORKS/11.webp" alt="question mark 0005">
-                    </div>
+                    <!-- Content will be loaded dynamically from Google Sheets -->
                 </div>
             </section>
         </main>
     </div>
     <script src="content-manager.js"></script>
     <script>
-        // Marcar el enlace activo en el menú
+        // Marcar el enlace activo en el menú y cargar contenido
         document.addEventListener('DOMContentLoaded', function() {
             const currentPage = 'works';
             const sidebarLinks = document.querySelectorAll('.sidebar a');
@@ -88,6 +56,10 @@
                     window.location.href = 'works-mobile.html';
                 }
             });
+            
+            // Load works content from Google Sheets
+            const contentManager = new ContentManager();
+            contentManager.loadWorksContent();
         });
     </script>
 </body>

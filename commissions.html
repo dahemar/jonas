@@ -30,87 +30,14 @@
         <main class="content">
             <section class="works-section" id="commissions">
                 <div id="commissions-posts" class="blog-container">
-                    <div class="blog-post">
-                        <img src="works/COMMISSIONS/1.webp" alt="01 iriai-verden-flag">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/COMMISSIONS/2.webp" alt="02 iriai-verden-flag2">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/COMMISSIONS/3.webp" alt="03 210207">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/COMMISSIONS/4.webp" alt="04 210215">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/COMMISSIONS/5.webp" alt="MariaSpivak WP8">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/COMMISSIONS/6.webp" alt="MariaSpivak WP8 2">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/COMMISSIONS/7.webp" alt="do you want to move back to ldn Salon">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/COMMISSIONS/8.webp" alt="great area WP8">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/COMMISSIONS/9.webp" alt="lolina Salon">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/COMMISSIONS/10.webp" alt="seedy executive type Salon des amateurs">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/COMMISSIONS/11.webp" alt="vicky performance 1">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/COMMISSIONS/12.webp" alt="vicky performance 2">
-                    </div>
-                    <div class="blog-post">
-                        <img src="works/COMMISSIONS/13.webp" alt="vicky performance 3">
-                    </div>
-                    
-                    <!-- Videos -->
-                    <div class="blog-post">
-                        <iframe width="100%" height="315" src="https://www.youtube.com/embed/oyWsw_F5dBw" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="blog-post">
-                        <iframe width="100%" height="315" src="https://www.youtube.com/embed/tsqOHflO9oo" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="blog-post">
-                        <iframe width="100%" height="315" src="https://www.youtube.com/embed/WKk5hvFGNEA" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="blog-post">
-                        <iframe width="100%" height="315" src="https://www.youtube.com/embed/a3Z8Cf4FTPc" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="blog-post">
-                        <a href="http://www.silkeschuster.eu/wp-content/uploads/2023/07/Version-3_-komprmiert.m4v" target="_blank" rel="noopener noreferrer">http://www.silkeschuster.eu/wp-content/uploads/2023/07/Version-3_-komprmiert.m4v</a>
-                    </div>
-                    <div class="blog-post">
-                        <iframe width="100%" height="315" src="https://www.youtube.com/embed/fHgOTOHAuvE" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="blog-post">
-                        <iframe width="100%" height="315" src="https://www.youtube.com/embed/Kew5Mx0AKFA" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="blog-post">
-                        <iframe width="100%" height="315" src="https://player.vimeo.com/video/900348430" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="blog-post">
-                        <iframe width="100%" height="315" src="https://www.youtube.com/embed/PGRpuMfU-G0" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="blog-post">
-                        <iframe width="100%" height="315" src="https://www.youtube.com/embed/SR5oBL6Uwh0" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="blog-post">
-                        <iframe width="100%" height="315" src="https://www.youtube.com/embed/9lvLPSJv9-k" frameborder="0" allowfullscreen></iframe>
-                    </div>
+                    <!-- Content will be loaded dynamically from Google Sheets -->
                 </div>
             </section>
         </main>
     </div>
     <script src="content-manager.js"></script>
     <script>
-        // Marcar el enlace activo en el menú
+        // Marcar el enlace activo en el menú y cargar contenido
         document.addEventListener('DOMContentLoaded', function() {
             const currentPage = 'commissions';
             const sidebarLinks = document.querySelectorAll('.sidebar a');
@@ -131,6 +58,10 @@
                     }
                 });
             }
+            
+            // Load commissions content from Google Sheets
+            const contentManager = new ContentManager();
+            contentManager.loadCommissionsContent();
         });
     </script>
 </body>
