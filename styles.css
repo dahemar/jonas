@@ -361,6 +361,13 @@ a:hover {
 } 
 
 @media (max-width: 768px) {
+    .content {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+} 
+
+@media (max-width: 768px) {
     .works-section {
         margin-left: 0px !important;
         margin-right: 0px !important;
