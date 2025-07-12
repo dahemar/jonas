@@ -13,7 +13,14 @@
         <nav class="sidebar">
             <ul>
                 <li><a href="index.html#blog">blog</a></li>
-                <li><a href="works.html">works</a></li>
+                <li class="submenu">
+                    <a href="works.html" class="works-link">works</a>
+                    <ul>
+                        <li><a href="works.html">works</a></li>
+                        <li><a href="commissions.html">commissions</a></li>
+                        <li><a href="exhibitions.html">exhibitions</a></li>
+                    </ul>
+                </li>
                 <li><a href="music.html">music</a></li>
                 <li><a href="radio.html">radio</a></li>
                 <li><a href="contact.html">contact</a></li>
@@ -42,6 +49,17 @@
                     link.classList.add('active');
                 }
             });
+            
+            // Handle mobile works navigation
+            const worksLink = document.querySelector('.works-link');
+            if (worksLink) {
+                worksLink.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768) {
+                        e.preventDefault();
+                        window.location.href = 'works-mobile.html';
+                    }
+                });
+            }
         });
     </script>
 </body>

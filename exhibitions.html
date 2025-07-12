@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>expensivemusic.com - works</title>
+    <title>expensivemusic.com - exhibitions</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="sidebar.css">
     <link rel="stylesheet" href="glitch.css">
@@ -28,40 +28,49 @@
         </nav>
 
         <main class="content">
-            <section class="works-section" id="works">
-                <div id="works-posts" class="blog-container">
+            <section class="works-section" id="exhibitions">
+                <div id="exhibitions-posts" class="blog-container">
                     <div class="blog-post">
-                        <img src="works/WORKS/1.webp" alt="03 210207">
+                        <img src="works/EXHIBITIONS/1.webp" alt="2019 westfaelischerkunstverein jahresgabe1 ueberschaetztespezies">
                     </div>
                     <div class="blog-post">
-                        <img src="works/WORKS/2.webp" alt="03 K8C5735">
+                        <img src="works/EXHIBITIONS/2.webp" alt="KVHBF 2020 lunchshow 09 jonasjusten 1">
                     </div>
                     <div class="blog-post">
-                        <img src="works/WORKS/3.webp" alt="04 210215">
+                        <img src="works/EXHIBITIONS/3.webp" alt="KVHBF 2020 lunchshow 09 jonasjusten 2">
                     </div>
                     <div class="blog-post">
-                        <img src="works/WORKS/4.webp" alt="06 img20231026 16310661">
+                        <img src="works/EXHIBITIONS/4.webp" alt="Kunstakademie classofTD 2 23">
                     </div>
                     <div class="blog-post">
-                        <img src="works/WORKS/5.webp" alt="08 IMG 6452 bright">
+                        <img src="works/EXHIBITIONS/5.webp" alt="jonasjusten spielohnegrenzen westfaelischerkunstverein2019">
                     </div>
                     <div class="blog-post">
-                        <img src="works/WORKS/6.webp" alt="question mark">
+                        <img src="works/EXHIBITIONS/6.webp" alt="jonasjusten verflixterblitzer2 westfaelischerkunstverein2019">
                     </div>
                     <div class="blog-post">
-                        <img src="works/WORKS/7.webp" alt="question mark 0001">
+                        <img src="works/EXHIBITIONS/7.webp" alt="reading food bonnerKV 6 23 1">
                     </div>
                     <div class="blog-post">
-                        <img src="works/WORKS/8.webp" alt="question mark 0002">
+                        <img src="works/EXHIBITIONS/8.webp" alt="reading food bonnerKV 6 23 2">
                     </div>
                     <div class="blog-post">
-                        <img src="works/WORKS/9.webp" alt="question mark 0003">
+                        <img src="works/EXHIBITIONS/9.webp" alt="reading food bonnerKV 6 23 3">
                     </div>
                     <div class="blog-post">
-                        <img src="works/WORKS/10.webp" alt="question mark 0004">
+                        <img src="works/EXHIBITIONS/10.webp" alt="reading food bonnerKV 6 23 4">
                     </div>
                     <div class="blog-post">
-                        <img src="works/WORKS/11.webp" alt="question mark 0005">
+                        <img src="works/EXHIBITIONS/11.webp" alt="reading food bonnerKV 6 23 5">
+                    </div>
+                    <div class="blog-post">
+                        <img src="works/EXHIBITIONS/12.webp" alt="wieder fruehling bonnerKV 3 23 1">
+                    </div>
+                    <div class="blog-post">
+                        <img src="works/EXHIBITIONS/13.webp" alt="wieder fruehling bonnerKV 3 23 2">
+                    </div>
+                    <div class="blog-post">
+                        <img src="works/EXHIBITIONS/14.webp" alt="wieder fruehling bonnerKV 3 23 3">
                     </div>
                 </div>
             </section>
@@ -71,23 +80,25 @@
     <script>
         // Marcar el enlace activo en el menú
         document.addEventListener('DOMContentLoaded', function() {
-            const currentPage = 'works';
+            const currentPage = 'exhibitions';
             const sidebarLinks = document.querySelectorAll('.sidebar a');
             
             sidebarLinks.forEach(link => {
-                if (link.getAttribute('href') === 'works.html') {
+                if (link.getAttribute('href') === 'exhibitions.html') {
                     link.classList.add('active');
                 }
             });
             
             // Handle mobile works navigation
             const worksLink = document.querySelector('.works-link');
-            worksLink.addEventListener('click', function(e) {
-                if (window.innerWidth <= 768) {
-                    e.preventDefault();
-                    window.location.href = 'works-mobile.html';
-                }
-            });
+            if (worksLink) {
+                worksLink.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768) {
+                        e.preventDefault();
+                        window.location.href = 'works-mobile.html';
+                    }
+                });
+            }
         });
     </script>
 </body>

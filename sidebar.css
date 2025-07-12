@@ -33,8 +33,25 @@
 
 .sidebar .submenu ul {
     margin-left: 1rem;
-    border-left: 1px solid #ddd;
+    border-left: 1px solid #000;
     padding-left: 1rem;
+    display: none;
+}
+
+/* Desktop hover effect only */
+@media (min-width: 769px) {
+    .sidebar .submenu:hover ul {
+        display: block;
+    }
+}
+
+.sidebar .submenu ul li {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar .submenu ul li a {
+    font-size: 0.9rem;
+    padding: 0.3rem 0;
 }
 
 @media (max-width: 768px) {
@@ -68,6 +85,7 @@
         margin-bottom: 0;
         text-align: center;
         min-width: 0;
+        position: relative;
     }
     
     .sidebar a {
@@ -77,6 +95,10 @@
         margin: 0;
         transition: none !important;
         animation: none !important;
+    }
+    
+    .sidebar .submenu ul {
+        display: none;
     }
     
     /* Remove all hover and active effects on mobile */
