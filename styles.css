@@ -294,8 +294,8 @@ a:hover {
     .works-table-container {
         width: 100% !important;
         box-sizing: border-box;
-        padding-left: 2px;
-        padding-right: 2px;
+        padding-left: 0px;
+        padding-right: 0px;
         margin: 0 !important;
         overflow-x: hidden !important;
     }
