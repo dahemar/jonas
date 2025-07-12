@@ -272,7 +272,7 @@ class ContentManager {
             // Left arrow
             const leftArrow = document.createElement('div');
             leftArrow.innerHTML = '‹';
-            leftArrow.style.position = 'absolute';
+            leftArrow.style.position = 'fixed';
             leftArrow.style.left = '20px';
             leftArrow.style.top = '50%';
             leftArrow.style.transform = 'translateY(-50%)';
@@ -298,12 +298,12 @@ class ContentManager {
                 img.src = images[currentImageIndex];
             });
             
-            imageContainer.appendChild(leftArrow);
+            overlay.appendChild(leftArrow);
             
             // Right arrow
             const rightArrow = document.createElement('div');
             rightArrow.innerHTML = '›';
-            rightArrow.style.position = 'absolute';
+            rightArrow.style.position = 'fixed';
             rightArrow.style.right = '20px';
             rightArrow.style.top = '50%';
             rightArrow.style.transform = 'translateY(-50%)';
@@ -329,7 +329,7 @@ class ContentManager {
                 img.src = images[currentImageIndex];
             });
             
-            imageContainer.appendChild(rightArrow);
+            overlay.appendChild(rightArrow);
             
             // Image counter
             const counter = document.createElement('div');
