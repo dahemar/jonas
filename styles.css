@@ -213,6 +213,7 @@ a:hover {
     border-collapse: collapse;
     margin-top: 1rem;
     font-family: 'Space Grotesk', sans-serif;
+    border: 1px solid #ddd;
 }
 
 .works-table th,
@@ -221,6 +222,7 @@ a:hover {
     text-align: left;
     border-bottom: 1px solid #ddd;
     vertical-align: top;
+    border: 1px solid #ddd;
 }
 
 .works-table th:nth-child(1),
