@@ -39,6 +39,9 @@ class ContentManager {
             case 'contact':
                 await this.loadContactContent();
                 break;
+            case 'work-detail':
+                await this.loadWorkDetail();
+                break;
             case 'commercial':
                 await this.loadCommercialContent();
                 break;
@@ -50,6 +53,7 @@ class ContentManager {
     // Get current page from URL
     getCurrentPage() {
         const path = window.location.pathname;
+        if (path.includes('work-detail.html')) return 'work-detail';
         if (path.includes('works.html')) return 'works';
         if (path.includes('music.html')) return 'music';
         if (path.includes('radio.html')) return 'radio';
@@ -154,8 +158,7 @@ class ContentManager {
         thead.innerHTML = isMobile ? `
             <tr>
                 <th data-col="title">title${userClicked && col==='title'?` <span class='sort-arrow'>${arrow}</span>`:''}</th>
-                <th data-col="date">date${userClicked && col==='date'?` <span class='sort-arrow'>${arrow}</span>`:''}</th>
-                <th data-col="type">type${userClicked && col==='type'?` <span class='sort-arrow'>${arrow}</span>`:''}</th>
+                <th data-col="description">description${userClicked && col==='description'?` <span class='sort-arrow'>${arrow}</span>`:''}</th>
             </tr>
         ` : `
             <tr>
@@ -170,12 +173,26 @@ class ContentManager {
         const tbody = document.createElement('tbody');
         works.forEach((work, index) => {
             const row = document.createElement('tr');
-            const hasLink = work.linkUrl && work.linkUrl.trim() !== '';
+            const linkUrl = work.linkUrl && work.linkUrl.trim();
+            const isVideoLink = linkUrl && (
+                linkUrl.match(/\.(mp4)$/i) ||
+                linkUrl.includes('youtube.com') ||
+                linkUrl.includes('youtu.be') ||
+                linkUrl.includes('vimeo.com')
+            );
+            const useExternal = linkUrl && !isVideoLink;
+            const viewUrl = useExternal ? linkUrl : `work-detail.html?row=${index}`;
+            const target = useExternal ? '_blank' : '_self';
+
             if (isMobile) {
+                let desc = work.description && work.description.trim() ? work.description.trim() : '';
+                let type = work.type && work.type.trim() ? work.type.trim() : '';
+                let descType = desc ? (type ? desc + ', ' + type : desc) : type;
                 row.innerHTML = `
-                    <td class="mobile-title" data-index="${index}" data-has-link="${hasLink}" data-link-url="${work.linkUrl}" data-images="${work.images.join('|')}" data-description="${work.description}" style="cursor:pointer;">${work.title}</td>
-                    <td>${work.date}</td>
-                    <td>${work.type}</td>
+                    <td class="mobile-title">
+                        <a href="${viewUrl}" target="${target}" style="display:block;width:100%;color:inherit;text-decoration:underline;">${work.title}</a>
+                    </td>
+                    <td>${descType}</td>
                 `;
             } else {
                 row.innerHTML = `
@@ -183,7 +200,7 @@ class ContentManager {
                     <td>${work.date}</td>
                     <td>${work.description}</td>
                     <td>${work.type}</td>
-                    <td><a href="#" class="view-work" data-index="${index}" data-has-link="${hasLink}" data-link-url="${work.linkUrl}" data-images="${work.images.join('|')}" data-description="${work.description}">view</a></td>
+                    <td><a href="${viewUrl}" target="${target}" class="view-work">${useExternal ? 'link' : 'view'}</a></td>
                 `;
             }
             tbody.appendChild(row);
@@ -192,25 +209,26 @@ class ContentManager {
         container.innerHTML = '';
         container.appendChild(table);
         // Add event listeners for view links
-        if (isMobile) {
-            const titleLinks = table.querySelectorAll('.mobile-title');
-            titleLinks.forEach(link => {
-                link.onclick = (e) => {
-                    e.preventDefault();
-                    const hasLink = link.getAttribute('data-has-link') === 'true';
-                    const linkUrl = link.getAttribute('data-link-url');
-                    const images = link.getAttribute('data-images').split('|').filter(img => img);
-                    const description = link.getAttribute('data-description');
-                    if (hasLink) {
-                        window.open(linkUrl, '_blank');
-                    } else if (images.length > 0) {
-                        this.showFullscreenWork(images, description);
-                    }
-                };
-            });
-        } else {
+        // (Eliminado para móvil: los enlaces <a> ya funcionan correctamente)
+        // if (isMobile) {
+        //     const titleLinks = table.querySelectorAll('.mobile-title');
+        //     titleLinks.forEach(link => {
+        //         link.onclick = (e) => {
+        //             e.preventDefault();
+        //             const hasLink = link.getAttribute('data-has-link') === 'true';
+        //             const linkUrl = link.getAttribute('data-link-url');
+        //             const images = link.getAttribute('data-images').split('|').filter(img => img);
+        //             const description = link.getAttribute('data-description');
+        //             if (hasLink) {
+        //                 window.open(linkUrl, '_blank');
+        //             } else if (images.length > 0) {
+        //                 this.showFullscreenWork(images, description);
+        //             }
+        //         };
+        //     });
+        // } else {
             this.addWorksTableEventListeners();
-        }
+        // }
         // Add sorting listeners
         const ths = table.querySelectorAll('th[data-col]');
         ths.forEach(th => {
@@ -237,250 +255,124 @@ class ContentManager {
 
     // Add event listeners for works table
     addWorksTableEventListeners() {
-        const viewLinks = document.querySelectorAll('.view-work');
-        viewLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const hasLink = link.getAttribute('data-has-link') === 'true';
-                const linkUrl = link.getAttribute('data-link-url');
-                const images = link.getAttribute('data-images').split('|').filter(img => img);
-                const description = link.getAttribute('data-description');
-                
-                if (hasLink) {
-                    // Open link directly in new tab
-                    window.open(linkUrl, '_blank');
-                } else if (images.length > 0) {
-                    // Show fullscreen modal for images
-                    this.showFullscreenWork(images, description);
-                }
-            });
-        });
+        // This function is now empty as logic is handled directly in HTML
     }
 
-    // Show fullscreen work modal - matching blog style with image navigation
+    // Show fullscreen work modal - this is now replaced by the detail page
     showFullscreenWork(images, description) {
-        if (!images || images.length === 0) return;
-        
-        let currentImageIndex = 0;
-        
-        // Create overlay like in blog
-        const overlay = document.createElement('div');
-        overlay.style.position = 'fixed';
-        overlay.style.top = 0;
-        overlay.style.left = 0;
-        overlay.style.width = '100vw';
-        overlay.style.height = '100vh';
-        overlay.style.background = '#fff'; // White background like blog
-        overlay.style.display = 'flex';
-        overlay.style.alignItems = 'center';
-        overlay.style.justifyContent = 'center';
-        overlay.style.zIndex = 9999;
-        overlay.style.flexDirection = 'column';
-        // X cursor like blog
-        overlay.style.cursor = 'url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'32\' height=\'32\' viewBox=\'0 0 32 32\'><text x=\'8\' y=\'24\' font-size=\'24\'>✕</text></svg>") 16 16, pointer';
-        
-        // Main container
-        const mainContainer = document.createElement('div');
-        mainContainer.style.position = 'relative';
-        mainContainer.style.display = 'flex';
-        mainContainer.style.flexDirection = 'column';
-        mainContainer.style.alignItems = 'center';
-        mainContainer.style.justifyContent = 'center';
-        mainContainer.style.maxWidth = '100vw';
-        mainContainer.style.maxHeight = '100vh';
-        
-        // Image container
-        const imageContainer = document.createElement('div');
-        imageContainer.style.position = 'relative';
-        imageContainer.style.display = 'flex';
-        imageContainer.style.alignItems = 'center';
-        imageContainer.style.justifyContent = 'center';
-        imageContainer.style.maxWidth = '100vw';
-        imageContainer.style.maxHeight = '80vh';
-        
-        // Create image element
-        const img = document.createElement('img');
-        img.src = images[currentImageIndex];
-        img.alt = 'Work';
-        img.style.maxWidth = '100vw';
-        img.style.maxHeight = '80vh';
-        img.style.boxShadow = '0 0 24px #0000'; // No shadow like blog
-        img.style.borderRadius = '0'; // Straight borders like blog
-        img.style.transition = 'opacity 0.3s ease';
-        
-        imageContainer.appendChild(img);
-        
-        // Navigation arrows (only show if multiple images)
-        if (images.length > 1) {
-            // Left arrow
-            const leftArrow = document.createElement('div');
-            leftArrow.innerHTML = '‹';
-            leftArrow.style.position = 'fixed';
-            leftArrow.style.left = '20px';
-            leftArrow.style.top = '50%';
-            leftArrow.style.transform = 'translateY(-50%)';
-            leftArrow.style.fontSize = '3rem';
-            leftArrow.style.color = '#333';
-            leftArrow.style.cursor = 'pointer';
-            leftArrow.style.userSelect = 'none';
-            leftArrow.style.zIndex = '10000';
-            leftArrow.style.opacity = '0.7';
-            leftArrow.style.transition = 'opacity 0.3s ease';
-            // Mobile: white circle with shadow
-            if (window.innerWidth <= 768) {
-                leftArrow.style.background = '#fff';
-                leftArrow.style.borderRadius = '50%';
-                leftArrow.style.width = '48px';
-                leftArrow.style.height = '48px';
-                leftArrow.style.display = 'flex';
-                leftArrow.style.alignItems = 'center';
-                leftArrow.style.justifyContent = 'center';
-                leftArrow.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
-                leftArrow.style.fontSize = '2rem';
-                leftArrow.style.border = '1px solid #eee';
-                leftArrow.style.lineHeight = '48px';
-                leftArrow.style.textAlign = 'center';
-                leftArrow.style.padding = '0';
+        // This function is no longer called from the works table
+        console.log("Navigating to detail page instead of showing modal.");
+    }
+
+    // NEW: Load content for the work detail page
+    async loadWorkDetail() {
+        const container = document.getElementById('work-detail-container');
+        if (!container) return;
+
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const rowIndex = parseInt(params.get('row'), 10);
+
+            if (isNaN(rowIndex)) {
+                container.innerHTML = '<p>Work not found.</p>';
+                return;
             }
-            
-            leftArrow.addEventListener('mouseenter', () => {
-                leftArrow.style.opacity = '1';
-            });
-            
-            leftArrow.addEventListener('mouseleave', () => {
-                leftArrow.style.opacity = '0.7';
-            });
-            
-            leftArrow.addEventListener('click', (e) => {
-                e.stopPropagation();
-                currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
-                img.src = images[currentImageIndex];
-            });
-            
-            overlay.appendChild(leftArrow);
-            
-            // Right arrow
-            const rightArrow = document.createElement('div');
-            rightArrow.innerHTML = '›';
-            rightArrow.style.position = 'fixed';
-            rightArrow.style.right = '20px';
-            rightArrow.style.top = '50%';
-            rightArrow.style.transform = 'translateY(-50%)';
-            rightArrow.style.fontSize = '3rem';
-            rightArrow.style.color = '#333';
-            rightArrow.style.cursor = 'pointer';
-            rightArrow.style.userSelect = 'none';
-            rightArrow.style.zIndex = '10000';
-            rightArrow.style.opacity = '0.7';
-            rightArrow.style.transition = 'opacity 0.3s ease';
-            // Mobile: white circle with shadow
-            if (window.innerWidth <= 768) {
-                rightArrow.style.background = '#fff';
-                rightArrow.style.borderRadius = '50%';
-                rightArrow.style.width = '48px';
-                rightArrow.style.height = '48px';
-                rightArrow.style.display = 'flex';
-                rightArrow.style.alignItems = 'center';
-                rightArrow.style.justifyContent = 'center';
-                rightArrow.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
-                rightArrow.style.fontSize = '2rem';
-                rightArrow.style.border = '1px solid #eee';
-                rightArrow.style.lineHeight = '48px';
-                rightArrow.style.textAlign = 'center';
-                rightArrow.style.padding = '0';
+
+            const worksData = await this.fetchSheetData('Works!A2:F');
+            const work = worksData[rowIndex];
+
+            if (!work) {
+                container.innerHTML = '<p>Work not found.</p>';
+                return;
             }
-            
-            rightArrow.addEventListener('mouseenter', () => {
-                rightArrow.style.opacity = '1';
-            });
-            
-            rightArrow.addEventListener('mouseleave', () => {
-                rightArrow.style.opacity = '0.7';
-            });
-            
-            rightArrow.addEventListener('click', (e) => {
-                e.stopPropagation();
-                currentImageIndex = (currentImageIndex + 1) % images.length;
-                img.src = images[currentImageIndex];
-            });
-            
-            overlay.appendChild(rightArrow);
-            
-            // Image counter
-            const counter = document.createElement('div');
-            counter.style.position = 'absolute';
-            counter.style.bottom = '-30px';
-            counter.style.left = '50%';
-            counter.style.transform = 'translateX(-50%)';
-            counter.style.fontSize = '0.9rem';
-            counter.style.color = '#666';
-            counter.style.userSelect = 'none';
-            
-            const updateCounter = () => {
-                counter.textContent = `${currentImageIndex + 1} / ${images.length}`;
-            };
-            updateCounter();
-            
-            imageContainer.appendChild(counter);
-            
-            // Update counter when navigating
-            leftArrow.addEventListener('click', updateCounter);
-            rightArrow.addEventListener('click', updateCounter);
-        }
-        
-        mainContainer.appendChild(imageContainer);
-        
-        // Add description if available
-        if (description) {
-            const caption = document.createElement('div');
-            caption.style.marginTop = '2.5rem';
-            caption.style.padding = '0 2rem';
-            caption.style.textAlign = 'center';
-            caption.style.color = '#333';
-            caption.style.fontSize = '1rem';
-            caption.style.lineHeight = '1.5';
-            caption.style.maxWidth = '80vw';
-            caption.innerHTML = linkify(description);
-            mainContainer.appendChild(caption);
-        }
-        
-        overlay.appendChild(mainContainer);
-        
-        // Close overlay on click (but not on arrows)
-        overlay.addEventListener('click', function(e) {
-            if (e.target === overlay || e.target === mainContainer) {
-                document.body.removeChild(overlay);
-            }
-        });
-        
-        // Keyboard navigation
-        document.addEventListener('keydown', function handleKeydown(e) {
-            if (images.length > 1) {
-                if (e.key === 'ArrowLeft') {
-                    e.preventDefault();
-                    currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
-                    img.src = images[currentImageIndex];
-                    if (typeof updateCounter === 'function') updateCounter();
-                } else if (e.key === 'ArrowRight') {
-                    e.preventDefault();
-                    currentImageIndex = (currentImageIndex + 1) % images.length;
-                    img.src = images[currentImageIndex];
-                    if (typeof updateCounter === 'function') updateCounter();
+
+            const title = this.safeGet(work, 0);
+            const date = this.safeGet(work, 1);
+            const description = this.safeGet(work, 2) || '';
+            const imageUrls = this.safeGet(work, 4) || '';
+            const images = imageUrls.split(',').map(url => url.trim()).filter(url => url);
+
+            let html = `
+                <div class="work-detail-header">
+                    <a href="works.html" class="back-button">&larr;</a>
+                </div>
+                <div class="work-detail-block">
+                    <div class="work-detail-meta">
+                        <div class="work-detail-title-small">title: ${title || ''}</div>
+                        ${date ? `<div class="work-detail-date-small">date: ${date}</div>` : ''}
+                        ${description ? `<div class="work-detail-description">${linkify(description)}</div>` : ''}
+                    </div>
+            `;
+
+            images.forEach(resourceUrl => {
+                if (resourceUrl.match(/\.(mp4)$/i)) {
+                    html += `<video class="work-detail-image" controls preload="metadata" style="background:#000;">
+                        <source src="${resourceUrl}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>`;
+                } else if (resourceUrl.includes('youtube.com') || resourceUrl.includes('youtu.be')) {
+                    // Si es un enlace de embed, úsalo tal cual
+                    if (resourceUrl.includes('/embed/')) {
+                        html += `<div class="work-detail-video-embed"><iframe width="100%" height="400" src="${resourceUrl}" frameborder="0" allowfullscreen loading="lazy"></iframe></div>`;
+                    } else {
+                        // YouTube embed robusto (incluye shorts y parámetros extra)
+                        let videoId = '';
+                        try {
+                            let urlObj = new URL(resourceUrl);
+                            if (urlObj.hostname.includes('youtu.be')) {
+                                videoId = urlObj.pathname.replace('/', '');
+                            } else if (urlObj.hostname.includes('youtube.com')) {
+                                if (urlObj.pathname.startsWith('/shorts/')) {
+                                    videoId = urlObj.pathname.split('/shorts/')[1].split(/[/?&#]/)[0];
+                                } else {
+                                    videoId = urlObj.searchParams.get('v');
+                                }
+                            }
+                            if (!videoId) {
+                                let match = resourceUrl.match(/[?&]v=([^&]+)/);
+                                if (match) videoId = match[1];
+                            }
+                            if (!videoId) {
+                                let match = resourceUrl.match(/shorts\/([a-zA-Z0-9_-]+)/);
+                                if (match) videoId = match[1];
+                            }
+                            if (!videoId) {
+                                let match = resourceUrl.match(/youtu.be\/([a-zA-Z0-9_-]+)/);
+                                if (match) videoId = match[1];
+                            }
+                        } catch (e) {}
+                        if (videoId) {
+                            html += `<div class="work-detail-video-embed"><iframe width="100%" height="400" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen loading="lazy"></iframe></div>`;
+                        } else {
+                            html += `<div class="work-detail-video-embed"><a href="${resourceUrl}" target="_blank">Ver vídeo en YouTube</a></div>`;
+                        }
+                    }
+                } else if (resourceUrl.includes('vimeo.com')) {
+                    // Vimeo embed
+                    const match = resourceUrl.match(/vimeo.com\/(\d+)/);
+                    const videoId = match ? match[1] : '';
+                    if (videoId) {
+                        html += `<div class="work-detail-video-embed"><iframe width="100%" height="400" src="https://player.vimeo.com/video/${videoId}" frameborder="0" allowfullscreen loading="lazy"></iframe></div>`;
+                    } else {
+                        html += `<div class="work-detail-video-embed"><a href="${resourceUrl}" target="_blank">Ver vídeo en Vimeo</a></div>`;
+                    }
+                } else {
+                    html += `<img src="${resourceUrl}" alt="${title || 'Work image'}" class="work-detail-image">`;
                 }
-            }
-            if (e.key === 'Escape') {
-                e.preventDefault();
-                document.body.removeChild(overlay);
-                document.removeEventListener('keydown', handleKeydown);
-            }
-        });
-        
-        document.body.appendChild(overlay);
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+
+        } catch (error) {
+            console.error('Error loading work detail:', error);
+            container.innerHTML = '<p>Could not load work details. Please try again later.</p>';
+        }
     }
 
     // Load music content - only project name is required
     async loadMusicContent() {
-        const data = await this.fetchSheetData('Music!A2:E');
+        const data = await this.fetchSheetData('Music!A2:F'); // Ahora incluye Thumbnail
         const container = document.querySelector('.music-projects');
         
         if (!container) return;
@@ -493,10 +385,41 @@ class ContentManager {
             const soundcloudUrl = this.safeGet(row, 2);
             const ninaUrl = this.safeGet(row, 3);
             const description = this.safeGet(row, 4);
-            
-                const project = this.createMusicProject(projectName, bandcampUrl, soundcloudUrl, ninaUrl, description);
-                container.appendChild(project);
+            const thumbnail = this.safeGet(row, 5);
+            const project = this.createMusicProject(projectName, bandcampUrl, soundcloudUrl, ninaUrl, description, thumbnail);
+            container.appendChild(project);
         });
+    }
+
+    // Create music project element - handles empty fields gracefully
+    createMusicProject(name, bandcampUrl, soundcloudUrl, ninaUrl, description, thumbnail) {
+        const project = document.createElement('div');
+        project.className = 'music-project';
+
+        let html = `<div class="music-project-info">`;
+        html += `<h2>${name}</h2>`;
+        if (description) {
+            html += `<p>${linkify(description)}</p>`;
+        }
+        if (bandcampUrl) {
+            html += `<p><a href="${bandcampUrl}" target="_blank" class="music-link">bandcamp</a></p>`;
+        }
+        if (soundcloudUrl) {
+            html += `<p><a href="${soundcloudUrl}" target="_blank" class="music-link">soundcloud</a></p>`;
+        }
+        if (ninaUrl) {
+            html += `<p><a href="${ninaUrl}" target="_blank" class="music-link">nina</a></p>`;
+        }
+        html += `</div>`;
+
+        if (thumbnail) {
+            html += `<div class="music-thumbnail-container"><img src="${thumbnail}" alt="${name} cover" class="music-thumbnail"></div>`;
+        } else {
+            html += `<div class="music-thumbnail-container"></div>`;
+        }
+
+        project.innerHTML = html;
+        return project;
     }
 
     // Load radio content - only embed code is required
@@ -810,30 +733,32 @@ class ContentManager {
     }
 
     // Create music project element - handles empty fields gracefully
-    createMusicProject(name, bandcampUrl, soundcloudUrl, ninaUrl, description) {
+    createMusicProject(name, bandcampUrl, soundcloudUrl, ninaUrl, description, thumbnail) {
         const project = document.createElement('div');
         project.className = 'music-project';
-        
-        let html = `<h2>${name}</h2>`;
-        
-        // Only include description if provided
+
+        let html = `<div class="music-project-info">`;
+        html += `<h2>${name}</h2>`;
         if (description) {
             html += `<p>${linkify(description)}</p>`;
         }
-        
-        // Only include links if provided
         if (bandcampUrl) {
             html += `<p><a href="${bandcampUrl}" target="_blank" class="music-link">bandcamp</a></p>`;
         }
-        
         if (soundcloudUrl) {
             html += `<p><a href="${soundcloudUrl}" target="_blank" class="music-link">soundcloud</a></p>`;
         }
-        
         if (ninaUrl) {
             html += `<p><a href="${ninaUrl}" target="_blank" class="music-link">nina</a></p>`;
         }
-        
+        html += `</div>`;
+
+        if (thumbnail) {
+            html += `<div class="music-thumbnail-container"><img src="${thumbnail}" alt="${name} cover" class="music-thumbnail"></div>`;
+        } else {
+            html += `<div class="music-thumbnail-container"></div>`;
+        }
+
         project.innerHTML = html;
         return project;
     }

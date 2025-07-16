@@ -10,10 +10,13 @@
 
 .sidebar ul {
     list-style: none;
+    line-height: 1.1;
+    padding: 0;
+    margin: 0;
 }
 
 .sidebar li {
-    margin-bottom: 0.7rem;
+    margin-bottom: 0.2rem;
 }
 
 .sidebar a {
