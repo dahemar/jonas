@@ -344,7 +344,7 @@ class ContentManager {
                         if (videoId) {
                             html += `<div class="work-detail-video-embed"><iframe width="100%" height="400" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen loading="lazy"></iframe></div>`;
                         } else {
-                            html += `<div class="work-detail-video-embed"><a href="${resourceUrl}" target="_blank">Ver vídeo en YouTube</a></div>`;
+                            html += `<div class="work-detail-video-embed"><a href="${resourceUrl}" target="_blank">see video on youtube</a></div>`;
                         }
                     }
                 } else if (resourceUrl.includes('vimeo.com')) {
@@ -354,7 +354,7 @@ class ContentManager {
                     if (videoId) {
                         html += `<div class="work-detail-video-embed"><iframe width="100%" height="400" src="https://player.vimeo.com/video/${videoId}" frameborder="0" allowfullscreen loading="lazy"></iframe></div>`;
                     } else {
-                        html += `<div class="work-detail-video-embed"><a href="${resourceUrl}" target="_blank">Ver vídeo en Vimeo</a></div>`;
+                        html += `<div class="work-detail-video-embed"><a href="${resourceUrl}" target="_blank">see video on vimeo</a></div>`;
                     }
                 } else {
                     html += `<img src="${resourceUrl}" alt="${title || 'Work image'}" class="work-detail-image">`;
