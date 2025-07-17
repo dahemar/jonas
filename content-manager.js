@@ -80,6 +80,17 @@ class ContentManager {
         return array && array[index] ? array[index].trim() : defaultValue;
     }
 
+    // Helper para extraer la URL de una imagen de un string tipo [img]URL[/img] o devolver el string tal cual
+    extractImageUrl(rawUrl) {
+        if (!rawUrl) return '';
+        const match = rawUrl.match(/\[img\](.+?)\[\/img\]/i);
+        if (match) {
+            // Solo elimina espacios al principio y final
+            return match[1].trim();
+        }
+        return rawUrl.trim();
+    }
+
     // Load blog content - only imageUrl is required
     async loadBlogContent() {
         const data = await this.fetchSheetData('Blog!A2:D');
@@ -172,7 +183,6 @@ class ContentManager {
         table.appendChild(thead);
         const tbody = document.createElement('tbody');
         works.forEach((work, index) => {
-            const row = document.createElement('tr');
             const linkUrl = work.linkUrl && work.linkUrl.trim();
             const isVideoLink = linkUrl && (
                 linkUrl.match(/\.(mp4)$/i) ||
@@ -184,9 +194,11 @@ class ContentManager {
             const viewUrl = useExternal ? linkUrl : `work-detail.html?row=${index}`;
             const target = useExternal ? '_blank' : '_self';
 
+            // Limpiar [img]...[/img] de descripción y tipo
+            let desc = work.description && work.description.trim() ? this.extractImageUrl(work.description.trim()) : '';
+            let type = work.type && work.type.trim() ? this.extractImageUrl(work.type.trim()) : '';
+
             if (isMobile) {
-                let desc = work.description && work.description.trim() ? work.description.trim() : '';
-                let type = work.type && work.type.trim() ? work.type.trim() : '';
                 let descType = desc ? (type ? desc + ', ' + type : desc) : type;
                 row.innerHTML = `
                     <td class="mobile-title">
@@ -198,8 +210,8 @@ class ContentManager {
                 row.innerHTML = `
                     <td>${work.title}</td>
                     <td>${work.date}</td>
-                    <td>${work.description}</td>
-                    <td>${work.type}</td>
+                    <td>${desc}</td>
+                    <td>${type}</td>
                     <td><a href="${viewUrl}" target="${target}" class="view-work">${useExternal ? 'link' : 'view'}</a></td>
                 `;
             }
@@ -290,7 +302,7 @@ class ContentManager {
             const date = this.safeGet(work, 1);
             const description = this.safeGet(work, 2) || '';
             const imageUrls = this.safeGet(work, 4) || '';
-            const images = imageUrls.split(',').map(url => url.trim()).filter(url => url);
+            const images = imageUrls.split(',').map(url => this.extractImageUrl(url.trim())).filter(url => url);
 
             let html = `
                 <div class="work-detail-header">
@@ -387,7 +399,7 @@ class ContentManager {
             const description = this.safeGet(row, 4);
             const thumbnail = this.safeGet(row, 5);
             const project = this.createMusicProject(projectName, bandcampUrl, soundcloudUrl, ninaUrl, description, thumbnail);
-            container.appendChild(project);
+                container.appendChild(project);
         });
     }
 
@@ -412,8 +424,18 @@ class ContentManager {
         }
         html += `</div>`;
 
-        if (thumbnail) {
-            html += `<div class="music-thumbnail-container"><img src="${thumbnail}" alt="${name} cover" class="music-thumbnail"></div>`;
+        const cleanThumb = this.extractImageUrl(thumbnail);
+        if (cleanThumb && cleanThumb.startsWith('@https://player.vimeo.com/video/')) {
+            // Es un video de Vimeo embebido
+            const vimeoUrl = cleanThumb.substring(1); // Quita el '@'
+            html += `<div class="music-thumbnail-container"><iframe src="${vimeoUrl}" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen class="music-thumbnail" style="width:100%;height:100%;"></iframe></div>`;
+        } else if (
+            cleanThumb && (
+                cleanThumb.match(/\.(jpg|jpeg|png|webp|gif)$/i) ||
+                cleanThumb.startsWith('https://drive.google.com/uc?export=view&id=')
+            )
+        ) {
+            html += `<div class="music-thumbnail-container"><img src="${cleanThumb}" alt="${name} cover" class="music-thumbnail"></div>`;
         } else {
             html += `<div class="music-thumbnail-container"></div>`;
         }
@@ -637,7 +659,7 @@ class ContentManager {
         container.innerHTML = '';
         
         data.forEach((row, i) => {
-            const imageUrl = this.safeGet(row, 0);
+            const imageUrl = this.extractImageUrl(this.safeGet(row, 0));
             const altText = this.safeGet(row, 1);
             const description = this.safeGet(row, 2);
             const videoUrl = this.safeGet(row, 2) || this.safeGet(row, 3); // Soporta ambos formatos
@@ -700,34 +722,36 @@ class ContentManager {
     createBlogPost(date, title, description, imageUrl, index = 0) {
         const post = document.createElement('div');
         post.className = 'blog-post';
-        
         let html = '';
-        
-        // Always include image if provided
-        if (imageUrl) {
+        // Refuerza limpieza: siempre extrae la url antes de crear el <img>
+        let cleanUrl = this.extractImageUrl(imageUrl);
+        cleanUrl = this.extractImageUrl(cleanUrl); // doble limpieza por si acaso
+        console.log('imageUrl:', imageUrl, 'cleanUrl:', cleanUrl); // DEPURACIÓN
+        if (
+            cleanUrl && (
+                cleanUrl.match(/\.(jpg|jpeg|png|webp|gif)$/i) ||
+                cleanUrl.startsWith('https://drive.google.com/uc?export=view&id=')
+            )
+        ) {
             const img = document.createElement('img');
-            img.src = imageUrl;
+            img.src = cleanUrl;
             img.alt = title || 'Blog post';
             img.loading = index < 3 ? 'eager' : 'lazy';
             img.addEventListener('load', () => img.classList.add('loaded'));
             html += img.outerHTML;
         }
-        
         // Only include title if provided
         if (title) {
             html += `<h3>${title}</h3>`;
         }
-        
         // Only include date if provided
         if (date) {
             html += `<p class="date">${date}</p>`;
         }
-        
         // Store description as data attribute for fullscreen view
         if (description) {
             post.setAttribute('data-description', description);
         }
-        
         post.innerHTML = html;
         return post;
     }
@@ -736,7 +760,7 @@ class ContentManager {
     createMusicProject(name, bandcampUrl, soundcloudUrl, ninaUrl, description, thumbnail) {
         const project = document.createElement('div');
         project.className = 'music-project';
-
+        
         let html = `<div class="music-project-info">`;
         html += `<h2>${name}</h2>`;
         if (description) {
@@ -753,12 +777,22 @@ class ContentManager {
         }
         html += `</div>`;
 
-        if (thumbnail) {
-            html += `<div class="music-thumbnail-container"><img src="${thumbnail}" alt="${name} cover" class="music-thumbnail"></div>`;
+        const cleanThumb = this.extractImageUrl(thumbnail);
+        if (cleanThumb && cleanThumb.startsWith('@https://player.vimeo.com/video/')) {
+            // Es un video de Vimeo embebido
+            const vimeoUrl = cleanThumb.substring(1); // Quita el '@'
+            html += `<div class="music-thumbnail-container"><iframe src="${vimeoUrl}" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen class="music-thumbnail" style="width:100%;height:100%;"></iframe></div>`;
+        } else if (
+            cleanThumb && (
+                cleanThumb.match(/\.(jpg|jpeg|png|webp|gif)$/i) ||
+                cleanThumb.startsWith('https://drive.google.com/uc?export=view&id=')
+            )
+        ) {
+            html += `<div class="music-thumbnail-container"><img src="${cleanThumb}" alt="${name} cover" class="music-thumbnail"></div>`;
         } else {
             html += `<div class="music-thumbnail-container"></div>`;
         }
-
+        
         project.innerHTML = html;
         return project;
     }
@@ -767,24 +801,25 @@ class ContentManager {
     createImagePost(imageUrl, altText, description, index = 0) {
         const post = document.createElement('div');
         post.className = 'blog-post';
-        
         let html = '';
-        
-        // Always include image if provided
-        if (imageUrl) {
+        const cleanUrl = this.extractImageUrl(imageUrl);
+        if (
+            cleanUrl && (
+                cleanUrl.match(/\.(jpg|jpeg|png|webp|gif)$/i) ||
+                cleanUrl.startsWith('https://drive.google.com/uc?export=view&id=')
+            )
+        ) {
             const img = document.createElement('img');
-            img.src = imageUrl;
+            img.src = cleanUrl;
             img.alt = altText || 'Image';
             img.loading = index < 3 ? 'eager' : 'lazy';
             img.addEventListener('load', () => img.classList.add('loaded'));
             html += img.outerHTML;
         }
-        
         // Store description as data attribute for fullscreen view
         if (description) {
             post.setAttribute('data-description', description);
         }
-        
         post.innerHTML = html;
         return post;
     }
@@ -794,9 +829,15 @@ class ContentManager {
         const post = document.createElement('div');
         post.className = 'blog-post';
         let html = '';
-        if (imageUrl) {
+        const cleanUrl = this.extractImageUrl(imageUrl);
+        if (
+            cleanUrl && (
+                cleanUrl.match(/\.(jpg|jpeg|png|webp|gif)$/i) ||
+                cleanUrl.startsWith('https://drive.google.com/uc?export=view&id=')
+            )
+        ) {
             const img = document.createElement('img');
-            img.src = imageUrl;
+            img.src = cleanUrl;
             img.alt = altText || 'Commercial work';
             img.loading = index < 3 ? 'eager' : 'lazy';
             img.addEventListener('load', () => img.classList.add('loaded'));
