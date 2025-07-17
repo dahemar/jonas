@@ -198,6 +198,8 @@ class ContentManager {
             let desc = work.description && work.description.trim() ? this.extractImageUrl(work.description.trim()) : '';
             let type = work.type && work.type.trim() ? this.extractImageUrl(work.type.trim()) : '';
 
+            const row = document.createElement('tr'); // <-- FALTA ESTA LÍNEA
+
             if (isMobile) {
                 let descType = desc ? (type ? desc + ', ' + type : desc) : type;
                 row.innerHTML = `
